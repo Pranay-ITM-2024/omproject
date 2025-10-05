@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - P2P Marketplace</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-store"></i>
+                <span>P2P Marketplace</span>
+            </div>
+            <div class="nav-menu" id="nav-menu">
+                <a href="../index.html" class="nav-link">Home</a>
+                <a href="../dashboard.html" class="nav-link">Dashboard</a>
+                <a href="browse.html" class="nav-link">Browse</a>
+                <a href="seller.html" class="nav-link nav-seller-only">Sell</a>
+                <a href="analytics.html" class="nav-link nav-seller-only">Analytics</a>
+                <a href="my-listings.html" class="nav-link nav-seller-only">My Listings</a>
+                <a href="matching.html" class="nav-link">Smart Match</a>
+                <a href="history.html" class="nav-link nav-buyer-only">History</a>
+                <a href="support.html" class="nav-link">Support</a>
+                <a href="admin.html" class="nav-link nav-admin-only active">Admin</a>
+                <div class="nav-user" id="nav-user">
+                    <span id="user-email"></span>
+                    <button class="btn btn-outline" id="logout-btn">Logout</button>
+                </div>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="admin-container">
+        <div class="container">
+            <div class="admin-header">
+                <h1>Admin Dashboard</h1>
+                <p>Manage platform operations and monitor system performance</p>
+            </div>
+
+            <!-- Admin Stats Overview -->
+            <div class="admin-stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="total-users">-</h3>
+                            <p>Total Users</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="total-listings">-</h3>
+                            <p>Active Listings</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-ticket-alt"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="pending-tickets">-</h3>
+                            <p>Pending Tickets</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="avg-rating">-</h3>
+                            <p>Avg Seller Rating</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Support Tickets Management -->
+            <div class="admin-tickets-section">
+                <div class="section-header">
+                    <h2>Support Tickets Management</h2>
+                    <p>Review and manage customer support tickets</p>
+                </div>
+
+                <div class="tickets-filters">
+                    <div class="filter-group">
+                        <label for="ticket-status-filter">Status:</label>
+                        <select id="ticket-status-filter">
+                            <option value="">All Status</option>
+                            <option value="open">Open</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="resolved">Resolved</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="ticket-priority-filter">Priority:</label>
+                        <select id="ticket-priority-filter">
+                            <option value="">All Priority</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+
+                    <button id="refresh-tickets" class="btn btn-outline">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+
+                <div id="admin-tickets-container" class="admin-tickets-container">
+                    <div id="admin-tickets-loading" class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading tickets...</p>
+                    </div>
+                    <div id="admin-tickets-list" class="admin-tickets-list">
+                        <!-- Tickets will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seller Analytics -->
+            <div class="admin-analytics-section">
+                <div class="section-header">
+                    <h2>Seller Analytics</h2>
+                    <p>Monitor seller performance and platform metrics</p>
+                </div>
+
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h3>Top Performing Sellers</h3>
+                        <div id="top-sellers" class="analytics-content">
+                            <div class="loading-spinner">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>Loading data...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <h3>Category Distribution</h3>
+                        <div id="category-stats" class="analytics-content">
+                            <div class="loading-spinner">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>Loading data...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <h3>Recent Feedback</h3>
+                        <div id="recent-feedback" class="analytics-content">
+                            <div class="loading-spinner">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>Loading data...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <h3>Platform Health</h3>
+                        <div id="platform-health" class="analytics-content">
+                            <div class="health-metrics">
+                                <div class="health-metric">
+                                    <span class="metric-label">System Uptime:</span>
+                                    <span class="metric-value" id="uptime">99.9%</span>
+                                </div>
+                                <div class="health-metric">
+                                    <span class="metric-label">Active Matches:</span>
+                                    <span class="metric-value" id="active-matches">-</span>
+                                </div>
+                                <div class="health-metric">
+                                    <span class="metric-label">Avg Response Time:</span>
+                                    <span class="metric-value" id="response-time">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Management -->
+            <div class="admin-users-section">
+                <div class="section-header">
+                    <h2>User Management</h2>
+                    <p>Manage user accounts and roles</p>
+                </div>
+
+                <div class="users-filters">
+                    <div class="filter-group">
+                        <label for="user-role-filter">Role:</label>
+                        <select id="user-role-filter">
+                            <option value="">All Roles</option>
+                            <option value="buyer">Buyers</option>
+                            <option value="seller">Sellers</option>
+                            <option value="admin">Admins</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="user-status-filter">Status:</label>
+                        <select id="user-status-filter">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="suspended">Suspended</option>
+                        </select>
+                    </div>
+
+                    <button id="refresh-users" class="btn btn-outline">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+
+                <div id="admin-users-container" class="admin-users-container">
+                    <div id="admin-users-loading" class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading users...</p>
+                    </div>
+                    <div id="admin-users-list" class="admin-users-list">
+                        <!-- Users will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Ticket Details Modal -->
+    <div id="admin-ticket-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="admin-ticket-modal-content">
+                <!-- Ticket details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- User Details Modal -->
+    <div id="admin-user-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="admin-user-modal-content">
+                <!-- User details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="../js/firebase.js"></script>
+    <script type="module" src="../js/app.js"></script>
+    <script type="module" src="../js/admin.js"></script>
+</body>
+
+</html>

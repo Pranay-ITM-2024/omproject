@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Matching - P2P Marketplace</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-store"></i>
+                <span>P2P Marketplace</span>
+            </div>
+            <div class="nav-menu" id="nav-menu">
+                <a href="../index.html" class="nav-link">Home</a>
+                <a href="../dashboard.html" class="nav-link">Dashboard</a>
+                <a href="browse.html" class="nav-link">Browse</a>
+                <a href="seller.html" class="nav-link nav-seller-only">Sell</a>
+                <a href="analytics.html" class="nav-link nav-seller-only">Analytics</a>
+                <a href="my-listings.html" class="nav-link nav-seller-only">My Listings</a>
+                <a href="matching.html" class="nav-link active">Smart Match</a>
+                <a href="history.html" class="nav-link nav-buyer-only">History</a>
+                <a href="support.html" class="nav-link">Support</a>
+                <a href="admin.html" class="nav-link nav-admin-only">Admin</a>
+                <div class="nav-user" id="nav-user">
+                    <span id="user-email"></span>
+                    <button class="btn btn-outline" id="logout-btn">Logout</button>
+                </div>
+                <button class="theme-toggle" id="theme-toggle">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </button>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="matching-container">
+        <div class="container">
+            <div class="matching-header">
+                <h1>Smart Product Matching</h1>
+                <p>Our advanced DSA algorithm finds the perfect products for your needs</p>
+            </div>
+
+            <!-- Matching Request Form -->
+            <div class="matching-request-section">
+                <div class="section-header">
+                    <h2>Create Matching Request</h2>
+                    <p>Tell us what you're looking for and we'll find the best matches</p>
+                </div>
+
+                <form id="matching-form" class="matching-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="desired-category">Desired Category *</label>
+                            <select id="desired-category" name="desiredCategory" required>
+                                <option value="">Select Category</option>
+                                <option value="electronics">Electronics</option>
+                                <option value="clothing">Clothing</option>
+                                <option value="home">Home & Garden</option>
+                                <option value="books">Books</option>
+                                <option value="sports">Sports</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="max-budget">Maximum Budget ($) *</label>
+                            <input type="number" id="max-budget" name="maxBudget" required min="0" step="0.01"
+                                placeholder="Enter your budget">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="keywords">Keywords *</label>
+                        <input type="text" id="keywords" name="keywords" required
+                            placeholder="e.g., vintage, handmade, organic, gaming">
+                        <small>Separate keywords with commas to help us find better matches</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="preferred-condition">Preferred Condition</label>
+                        <select id="preferred-condition" name="preferredCondition">
+                            <option value="">Any Condition</option>
+                            <option value="new">New</option>
+                            <option value="like-new">Like New</option>
+                            <option value="good">Good</option>
+                            <option value="fair">Fair</option>
+                            <option value="poor">Poor</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location-preference">Location Preference</label>
+                        <input type="text" id="location-preference" name="locationPreference"
+                            placeholder="City, State (optional)">
+                        <small>Help us find local sellers</small>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-large" id="find-matches-btn">
+                            <span class="btn-text">
+                                <i class="fas fa-magic"></i> Find Matches
+                            </span>
+                            <span class="btn-loading" style="display: none;">
+                                <i class="fas fa-spinner fa-spin"></i> Finding matches...
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Matching Results -->
+            <div class="matching-results-section" id="matching-results" style="display: none;">
+                <div class="section-header">
+                    <h2>Matching Results</h2>
+                    <p>Based on your criteria, here are the best matches we found</p>
+                </div>
+
+                <div class="algorithm-info">
+                    <div class="info-card">
+                        <i class="fas fa-brain"></i>
+                        <h3>DSA Algorithm Applied</h3>
+                        <p>Our greedy matching algorithm analyzed all available products and ranked them based on
+                            keyword relevance, price optimization, and category matching.</p>
+                    </div>
+                </div>
+
+                <div id="matches-container" class="matches-container">
+                    <!-- Matches will be loaded here -->
+                </div>
+
+                <div class="matching-actions">
+                    <button class="btn btn-outline" id="new-search-btn">
+                        <i class="fas fa-search"></i> New Search
+                    </button>
+                    <button class="btn btn-primary" id="save-search-btn">
+                        <i class="fas fa-bookmark"></i> Save Search
+                    </button>
+                </div>
+            </div>
+
+            <!-- My Matching History -->
+            <div class="matching-history-section">
+                <div class="section-header">
+                    <h2>My Matching History</h2>
+                    <p>View your previous matching requests and results</p>
+                </div>
+
+                <div id="history-container" class="history-container">
+                    <div id="history-loading" class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading your matching history...</p>
+                    </div>
+                    <div id="history-list" class="history-list">
+                        <!-- History will be loaded here -->
+                    </div>
+                    <div id="no-history" class="no-history" style="display: none;">
+                        <i class="fas fa-history"></i>
+                        <h3>No matching history</h3>
+                        <p>Create your first matching request above</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Match Details Modal -->
+    <div id="match-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="match-modal-content">
+                <!-- Match details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/theme.js"></script>
+    <script type="module" src="../js/firebase.js"></script>
+    <script type="module" src="../js/app.js"></script>
+    <script type="module" src="../js/matching.js"></script>
+</body>
+
+</html>

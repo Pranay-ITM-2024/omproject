@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P2P Marketplace - Smart Trading Platform</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-store"></i>
+                <span>P2P Marketplace</span>
+            </div>
+            <div class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link active">Home</a>
+                <a href="pages/browse.html" class="nav-link" id="browse-link">Browse</a>
+                <div class="nav-auth" id="nav-auth">
+                    <a href="login.html" class="nav-link">Login</a>
+                    <a href="signup.html" class="btn btn-primary">Sign Up</a>
+                </div>
+                <div class="nav-user" id="nav-user" style="display: none;">
+                    <a href="dashboard.html" class="nav-link">Dashboard</a>
+                    <span id="user-email"></span>
+                    <button class="btn btn-outline" id="logout-btn">Logout</button>
+                </div>
+                <button class="theme-toggle" id="theme-toggle">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </button>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Smart P2P Marketplace</h1>
+                <p>Discover products with our intelligent matching algorithm. Buy, sell, and trade with confidence in our secure platform.</p>
+                <div class="hero-buttons">
+                    <a href="signup.html" class="btn btn-primary btn-lg">Get Started</a>
+                    <a href="pages/browse.html" class="btn btn-outline btn-lg">Browse Products</a>
+                </div>
+            </div>
+            <div class="hero-features">
+                <div class="feature">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Secure Transactions</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-brain"></i>
+                    <span>Smart Matching</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-users"></i>
+                    <span>Community Driven</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features">
+            <div class="container">
+                <h2>Why Choose Our Platform?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h3>Smart Product Discovery</h3>
+                        <p>Our DSA-powered matching algorithm finds the perfect products based on your preferences, budget, and requirements.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <h3>Secure & Trusted</h3>
+                        <p>Role-based authentication, secure transactions, and comprehensive seller ratings ensure safe trading.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>Performance Analytics</h3>
+                        <p>Track your selling performance, understand market trends, and optimize your listings for better visibility.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h3>24/7 Support</h3>
+                        <p>Our dedicated support team is always ready to help you with any questions or issues you might have.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section class="how-it-works">
+            <div class="container">
+                <h2>How It Works</h2>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <h3>Sign Up</h3>
+                        <p>Create your account and choose your role as a buyer, seller, or both.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <h3>Browse or List</h3>
+                        <p>Browse products using our smart search or list your items for sale.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <h3>Smart Matching</h3>
+                        <p>Our algorithm matches buyers with the best products based on their criteria.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <h3>Secure Transaction</h3>
+                        <p>Complete your transaction safely with our secure platform and rating system.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta">
+            <div class="cta-content">
+                <h2>Ready to Start Trading?</h2>
+                <p>Join thousands of users who trust our platform for secure peer-to-peer trading.</p>
+                <div class="cta-buttons">
+                    <a href="signup.html" class="btn btn-primary btn-lg">Join as Buyer</a>
+                    <a href="signup.html" class="btn btn-outline btn-lg">Join as Seller</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>P2P Marketplace</h4>
+                <p>Smart trading platform powered by advanced matching algorithms.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="pages/browse.html">Browse Products</a></li>
+                    <li><a href="login.html">Login</a></li>
+                    <li><a href="signup.html">Sign Up</a></li>
+                    <li><a href="pages/support.html">Support</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>For Sellers</h4>
+                <ul>
+                    <li><a href="pages/seller.html">List Products</a></li>
+                    <li><a href="pages/my-listings.html">My Listings</a></li>
+                    <li><a href="pages/analytics.html">Analytics</a></li>
+                    <li><a href="pages/support.html">Seller Support</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <ul>
+                    <li><i class="fas fa-envelope"></i> support@p2pmarketplace.com</li>
+                    <li><i class="fas fa-phone"></i> +1 (555) 123-4567</i>
+                    <li><i class="fas fa-map-marker-alt"></i> 123 Market St, City</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 P2P Marketplace. All rights reserved.</p>
+        </div>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="js/firebase.js"></script>
+    <script type="module" src="js/app.js"></script>
+    
+    <!-- Inline Theme System for Immediate Functionality -->
+    <script>
+        // Immediate theme system - works before app.js loads
+        (function() {
+            console.log('Inline theme script running...');
+            
+            // Apply saved theme immediately
+            const savedTheme = localStorage.getItem('marketplace-theme') || 'light';
+            console.log('Applying saved theme:', savedTheme);
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            if (savedTheme === 'dark') {
+                document.body.classList.add('theme-dark');
+            }
+            
+            // Set up theme toggle when DOM is ready
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('Setting up inline theme toggle...');
+                const themeToggle = document.getElementById('theme-toggle');
+                const themeIcon = document.getElementById('theme-icon');
+                
+                if (themeToggle) {
+                    console.log('Found theme toggle, adding listener');
+                    
+                    // Update icon based on current theme
+                    if (savedTheme === 'dark' && themeIcon) {
+                        themeIcon.className = 'fas fa-sun';
+                    }
+                    
+                    themeToggle.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        console.log('Theme toggle clicked!');
+                        
+                        const currentTheme = document.documentElement.getAttribute('data-theme');
+                        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                        
+                        console.log('Switching from', currentTheme, 'to', newTheme);
+                        
+                        // Apply new theme
+                        document.documentElement.setAttribute('data-theme', newTheme);
+                        document.body.className = document.body.className.replace('theme-dark', '');
+                        if (newTheme === 'dark') {
+                            document.body.classList.add('theme-dark');
+                        }
+                        
+                        // Update icon
+                        if (themeIcon) {
+                            themeIcon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+                        }
+                        
+                        // Save preference
+                        localStorage.setItem('marketplace-theme', newTheme);
+                        
+                        console.log('Theme changed to:', newTheme);
+                    });
+                } else {
+                    console.log('Theme toggle button not found!');
+                }
+            });
+        })();
+    </script>
+    <script src="js/theme.js"></script>
+</body>
+
+</html>

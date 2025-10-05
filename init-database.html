@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Initialization - P2P Marketplace</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .step {
+            margin: 10px 0;
+            padding: 10px;
+            background: #e8f4f8;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🚀 Database Initialization</h1>
+
+        <div class="warning">
+            <strong>⚠️ Prerequisites:</strong> Make sure you have already run the user setup script first!
+            <br>If you haven't, go to <a href="setup-user-data.html">setup-user-data.html</a> first.
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ Warning:</strong> This will create sample data in your Firestore database.
+            Make sure you have the correct Firebase project selected and that you have the necessary permissions.
+        </div>
+
+        <div class="step">
+            <h3>🎯 This script will create:</h3>
+            <ul>
+                <li>✅ Product categories (Electronics, Clothing, Home & Garden, etc.)</li>
+                <li>✅ System settings and configuration</li>
+                <li>✅ Sample product listings (assigned to your seller account)</li>
+                <li>✅ System announcements and platform content</li>
+                <li>✅ Sample purchase requests for testing matching algorithm</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <button id="initBtn" onclick="initializeDatabase()">🚀 Initialize Database</button>
+            <button id="autoBtn" onclick="autoExecute()" style="background: #27ae60;">⚡ Auto-Execute</button>
+            <button onclick="clearLog()">🧹 Clear Log</button>
+        </div>
+
+        <div id="log" class="log">Ready to initialize database. Click a button above to start...</div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import {
+            getFirestore,
+            collection,
+            addDoc,
+            doc,
+            setDoc
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC_7Q3zFCAU-NpZ24UKtz-DkkIwFHCgICU",
+            authDomain: "finaldestination-e3b5a.firebaseapp.com",
+            projectId: "finaldestination-e3b5a",
+            storageBucket: "finaldestination-e3b5a.firebasestorage.app",
+            messagingSenderId: "1004171999317",
+            appId: "1:1004171999317:web:f36c584200d2f85df23cdc",
+            measurementId: "G-EJVP6S98C8"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Logging function
+        function log(message) {
+            const logElement = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.textContent += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        // Clear log function
+        window.clearLog = function () {
+            document.getElementById('log').textContent = '';
+        };
+
+        // Initialize database with sample data
+        async function initializeDatabase() {
+            const initBtn = document.getElementById('initBtn');
+            initBtn.disabled = true;
+            initBtn.textContent = 'Initializing...';
+
+            try {
+                log('🚀 Starting database initialization...');
+
+                // 1. Create initial categories
+                await createInitialCategories();
+
+                // 2. Create system settings
+                await createSystemSettings();
+
+                // 3. Create sample users
+                await createSampleUsers();
+
+                // 4. Create sample listings
+                await createSampleListings();
+
+                // 5. Create system announcements
+                await createSystemAnnouncements();
+
+                log('✅ Database initialization completed successfully!');
+                log('🎉 Your P2P marketplace is ready to use!');
+
+                // Show success message
+                const successDiv = document.createElement('div');
+                successDiv.className = 'success';
+                successDiv.style.cssText = 'background: #d4edda; color: #155724; padding: 15px; margin: 10px 0; border-radius: 5px; border: 1px solid #c3e6cb;';
+                successDiv.innerHTML = '<strong>✅ Success!</strong> Database has been initialized successfully. You can now use your P2P marketplace.';
+                
+                const logElement = document.getElementById('log');
+                const container = document.querySelector('.container');
+                if (container && logElement) {
+                    container.insertBefore(successDiv, logElement);
+                }
+
+            } catch (error) {
+                log(`❌ Error initializing database: ${error.message}`);
+                console.error('Database initialization error:', error);
+
+                // Show error message
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error';
+                errorDiv.style.cssText = 'background: #f8d7da; color: #721c24; padding: 15px; margin: 10px 0; border-radius: 5px; border: 1px solid #f5c6cb;';
+                errorDiv.innerHTML = `<strong>❌ Error!</strong> ${error.message}`;
+                
+                const logElement = document.getElementById('log');
+                const container = document.querySelector('.container');
+                if (container && logElement) {
+                    container.insertBefore(errorDiv, logElement);
+                }
+            } finally {
+                initBtn.disabled = false;
+                initBtn.textContent = 'Initialize Database';
+            }
+        }
+
+        // Create initial product categories
+        async function createInitialCategories() {
+            log('📁 Creating product categories...');
+
+            const categories = [
+                {
+                    id: 'electronics',
+                    name: 'Electronics',
+                    description: 'Electronic devices, gadgets, and tech accessories',
+                    icon: 'fas fa-laptop',
+                    color: '#3498db',
+                    isActive: true,
+                    createdAt: new Date()
+                },
+                {
+                    id: 'clothing',
+                    name: 'Clothing',
+                    description: 'Fashion, apparel, and accessories',
+                    icon: 'fas fa-tshirt',
+                    color: '#e74c3c',
+                    isActive: true,
+                    createdAt: new Date()
+                },
+                {
+                    id: 'home',
+                    name: 'Home & Garden',
+                    description: 'Home improvement, furniture, and gardening',
+                    icon: 'fas fa-home',
+                    color: '#27ae60',
+                    isActive: true,
+                    createdAt: new Date()
+                },
+                {
+                    id: 'books',
+                    name: 'Books',
+                    description: 'Books, educational materials, and media',
+                    icon: 'fas fa-book',
+                    color: '#f39c12',
+                    isActive: true,
+                    createdAt: new Date()
+                },
+                {
+                    id: 'sports',
+                    name: 'Sports',
+                    description: 'Sports equipment, fitness, and outdoor gear',
+                    icon: 'fas fa-dumbbell',
+                    color: '#9b59b6',
+                    isActive: true,
+                    createdAt: new Date()
+                },
+                {
+                    id: 'other',
+                    name: 'Other',
+                    description: 'Miscellaneous items and services',
+                    icon: 'fas fa-box',
+                    color: '#95a5a6',
+                    isActive: true,
+                    createdAt: new Date()
+                }
+            ];
+
+            for (const category of categories) {
+                await setDoc(doc(db, 'categories', category.id), category);
+                log(`  ✓ Created category: ${category.name}`);
+            }
+        }
+
+        // Create system settings
+        async function createSystemSettings() {
+            log('⚙️ Creating system settings...');
+
+            const settings = {
+                platformName: 'P2P Marketplace',
+                version: '1.0.0',
+                maintenanceMode: false,
+                maxListingsPerUser: 50,
+                maxPrice: 10000,
+                minPrice: 0.01,
+                maxDescriptionLength: 1000,
+                maxTitleLength: 100,
+                supportedImageFormats: ['jpg', 'jpeg', 'png', 'webp'],
+                maxImageSize: 5242880, // 5MB
+                matchingAlgorithm: 'DSA Greedy',
+                defaultCurrency: 'INR',
+                timezone: 'UTC',
+                features: {
+                    smartMatching: true,
+                    chatSystem: true,
+                    feedbackSystem: true,
+                    analytics: true,
+                    notifications: true
+                },
+                createdAt: new Date(),
+                updatedAt: new Date()
+            };
+
+            await setDoc(doc(db, 'settings', 'platform'), settings);
+            log('  ✓ Created platform settings');
+        }
+
+        // Create sample users for testing
+        async function createSampleUsers() {
+            log('👥 Creating sample users...');
+
+            const sampleUsers = [
+                {
+                    uid: '5KarqQeV1zUEWQUn9Prm5SlpJgu2',
+                    email: 'buyer@example.com',
+                    role: 'buyer',
+                    profile: {
+                        firstName: 'John',
+                        lastName: 'Doe',
+                        phone: '+1-555-0123',
+                        address: '123 Main St, New York, NY 10001'
+                    },
+                    preferences: {
+                        categories: ['electronics', 'books'],
+                        maxBudget: 500,
+                        location: 'New York, NY'
+                    },
+                    createdAt: new Date(),
+                    lastLogin: new Date()
+                },
+                {
+                    uid: 'JnyqPLyJtOgsZxikrh7cPw6gZOD3',
+                    email: 'seller@example.com',
+                    role: 'seller',
+                    profile: {
+                        firstName: 'Jane',
+                        lastName: 'Smith',
+                        phone: '+1-555-0456',
+                        address: '456 Oak Ave, Los Angeles, CA 90210'
+                    },
+                    sellerProfile: {
+                        businessName: 'Jane\'s Electronics',
+                        description: 'Quality electronics at great prices',
+                        rating: 4.8,
+                        totalSales: 0,
+                        responseTime: '2 hours'
+                    },
+                    createdAt: new Date(),
+                    lastLogin: new Date()
+                },
+                {
+                    uid: 'admin-sample-123',
+                    email: 'admin@example.com',
+                    role: 'admin',
+                    profile: {
+                        firstName: 'Admin',
+                        lastName: 'User',
+                        phone: '+1-555-0789',
+                        address: '789 Admin Blvd, San Francisco, CA 94102'
+                    },
+                    adminPrivileges: {
+                        canManageUsers: true,
+                        canManageListings: true,
+                        canViewAnalytics: true,
+                        canManageTickets: true
+                    },
+                    createdAt: new Date(),
+                    lastLogin: new Date()
+                }
+            ];
+
+            for (const user of sampleUsers) {
+                await setDoc(doc(db, 'users', user.uid), user);
+                log(`  ✓ Created user: ${user.email} (${user.role})`);
+            }
+        }
+
+        // Create sample listings
+        async function createSampleListings() {
+            log('📦 Creating sample listings...');
+
+            const sampleListings = [
+                {
+                    title: 'MacBook Pro 13-inch M2',
+                    description: 'Excellent condition MacBook Pro with M2 chip. Perfect for students and professionals. Includes original charger and box.',
+                    category: 'electronics',
+                    price: 1299.99,
+                    condition: 'like-new',
+                    keywords: 'macbook, laptop, apple, m2, professional',
+                    location: 'New York, NY',
+                    sellerId: 'JnyqPLyJtOgsZxikrh7cPw6gZOD3',
+                    sellerEmail: 'seller@example.com',
+                    status: 'active',
+                    views: 0,
+                    rating: 0,
+                    ratingCount: 0,
+                    images: [],
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                },
+                {
+                    title: 'Vintage Leather Jacket',
+                    description: 'Beautiful vintage leather jacket in excellent condition. Size Medium. Perfect for motorcycle riding or casual wear.',
+                    category: 'clothing',
+                    price: 89.99,
+                    condition: 'good',
+                    keywords: 'leather, jacket, vintage, motorcycle, medium',
+                    location: 'Los Angeles, CA',
+                    sellerId: 'JnyqPLyJtOgsZxikrh7cPw6gZOD3',
+                    sellerEmail: 'seller@example.com',
+                    status: 'active',
+                    views: 0,
+                    rating: 0,
+                    ratingCount: 0,
+                    images: [],
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                },
+                {
+                    title: 'Programming Books Collection',
+                    description: 'Collection of programming books including JavaScript, Python, and React. Great for developers and students.',
+                    category: 'books',
+                    price: 45.00,
+                    condition: 'good',
+                    keywords: 'programming, javascript, python, react, books, coding',
+                    location: 'San Francisco, CA',
+                    sellerId: 'JnyqPLyJtOgsZxikrh7cPw6gZOD3',
+                    sellerEmail: 'seller@example.com',
+                    status: 'active',
+                    views: 0,
+                    rating: 0,
+                    ratingCount: 0,
+                    images: [],
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                }
+            ];
+
+            for (const listing of sampleListings) {
+                const docRef = await addDoc(collection(db, 'listings'), listing);
+                log(`  ✓ Created listing: ${listing.title} (ID: ${docRef.id})`);
+            }
+        }
+
+        // Create system announcements
+        async function createSystemAnnouncements() {
+            log('📢 Creating system announcements...');
+
+            const announcements = [
+                {
+                    title: 'Welcome to P2P Marketplace!',
+                    content: 'Welcome to our new P2P marketplace platform. We\'re excited to help you buy and sell products with our smart matching algorithm.',
+                    type: 'info',
+                    priority: 'medium',
+                    isActive: true,
+                    startDate: new Date(),
+                    endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+                    createdAt: new Date()
+                },
+                {
+                    title: 'Smart Matching Algorithm',
+                    content: 'Our advanced DSA-based matching algorithm helps you find the perfect products based on your preferences, budget, and keywords.',
+                    type: 'feature',
+                    priority: 'high',
+                    isActive: true,
+                    startDate: new Date(),
+                    endDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 60 days from now
+                    createdAt: new Date()
+                }
+            ];
+
+            for (const announcement of announcements) {
+                const docRef = await addDoc(collection(db, 'announcements'), announcement);
+                log(`  ✓ Created announcement: ${announcement.title} (ID: ${docRef.id})`);
+            }
+        }
+
+        // Auto-execute function
+        function autoExecute() {
+            if (confirm('🚀 This will automatically initialize the entire database.\n\nThis will create:\n• Product categories\n• System settings\n• Sample listings\n• Platform announcements\n\nContinue?')) {
+                initializeDatabase();
+            }
+        }
+
+        // Clear log function
+        function clearLog() {
+            const logDiv = document.getElementById('log');
+            if (logDiv) {
+                logDiv.textContent = 'Log cleared. Ready for next operation...';
+            }
+        }
+
+        // Make functions globally available
+        window.initializeDatabase = initializeDatabase;
+        window.autoExecute = autoExecute;
+        window.clearLog = clearLog;
+    </script>
+</body>
+
+</html>

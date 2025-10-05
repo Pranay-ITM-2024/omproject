@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Listings - P2P Marketplace</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+        <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-store"></i>
+                <span>P2P Marketplace</span>
+            </div>
+            <div class="nav-menu" id="nav-menu">
+                <a href="../index.html" class="nav-link">Home</a>
+                <a href="../dashboard.html" class="nav-link">Dashboard</a>
+                <a href="browse.html" class="nav-link">Browse</a>
+                <a href="seller.html" class="nav-link nav-seller-only">Sell</a>
+                <a href="analytics.html" class="nav-link nav-seller-only">Analytics</a>
+                <a href="my-listings.html" class="nav-link nav-seller-only active">My Listings</a>
+                <a href="matching.html" class="nav-link">Smart Match</a>
+                <a href="history.html" class="nav-link nav-buyer-only">History</a>
+                <a href="support.html" class="nav-link">Support</a>
+                <a href="admin.html" class="nav-link nav-admin-only">Admin</a>
+                <div class="nav-user" id="nav-user">
+                    <span id="user-email"></span>
+                    <button class="btn btn-outline" id="logout-btn">Logout</button>
+                </div>
+                <button class="theme-toggle" id="theme-toggle">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </button>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="listings-container">
+        <div class="container">
+            <div class="listings-header">
+                <h1>My Listings</h1>
+                <p>Manage your product listings and track their performance</p>
+                <div class="header-actions">
+                    <a href="seller.html" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add New Product
+                    </a>
+                </div>
+            </div>
+
+            <!-- Listings Management -->
+            <div class="listings-content">
+                <!-- Filter and Sort -->
+                <div class="listings-controls">
+                    <div class="control-group">
+                        <label for="status-filter">Filter by Status:</label>
+                        <select id="status-filter">
+                            <option value="">All Listings</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="sold">Sold</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="sort-by">Sort by:</label>
+                        <select id="sort-by">
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                            <option value="price-high">Price: High to Low</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="views">Most Viewed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Listings Grid -->
+                <div id="listings-loading" class="loading" style="display: none;">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Loading your listings...
+                </div>
+
+                <div id="listings-grid" class="listings-grid">
+                    <!-- Listings will be loaded here -->
+                </div>
+
+                <div id="no-listings" class="no-content" style="display: none;">
+                    <i class="fas fa-box-open"></i>
+                    <h3>No listings found</h3>
+                    <p>You haven't created any listings yet.</p>
+                    <a href="seller.html" class="btn btn-primary">Create Your First Listing</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Edit Listing Modal -->
+    <div id="edit-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Listing</h2>
+                <span class="close" onclick="closeEditModal()">&times;</span>
+            </div>
+            <form id="edit-form" class="modal-form">
+                <input type="hidden" id="edit-listing-id">
+                
+                <div class="form-group">
+                    <label for="edit-title">Product Title</label>
+                    <input type="text" id="edit-title" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-description">Description</label>
+                    <textarea id="edit-description" rows="4" required></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-price">Price (₹)</label>
+                        <input type="number" id="edit-price" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-category">Category</label>
+                        <select id="edit-category" required>
+                            <option value="">Select Category</option>
+                            <option value="electronics">Electronics</option>
+                            <option value="clothing">Clothing</option>
+                            <option value="home">Home & Garden</option>
+                            <option value="books">Books</option>
+                            <option value="sports">Sports</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-condition">Condition</label>
+                    <select id="edit-condition" required>
+                        <option value="">Select Condition</option>
+                        <option value="new">New</option>
+                        <option value="like-new">Like New</option>
+                        <option value="good">Good</option>
+                        <option value="fair">Fair</option>
+                        <option value="poor">Poor</option>
+                    </select>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Listing</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="../js/firebase.js"></script>
+    <script type="module" src="../js/app.js"></script>
+    <script type="module">
+        import {
+            getCurrentUser,
+            requireAuth,
+            db,
+            collection,
+            getDocs,
+            query,
+            where,
+            orderBy,
+            doc,
+            updateDoc,
+            deleteDoc,
+            formatDate,
+            formatCurrency,
+            showNotification
+        } from '../js/firebase.js';
+
+        let allListings = [];
+        let filteredListings = [];
+
+        document.addEventListener('DOMContentLoaded', function () {
+            setTimeout(() => {
+                if (requireAuth()) {
+                    initializeListingsPage();
+                }
+            }, 1500);
+        });
+
+        async function initializeListingsPage() {
+            await loadListings();
+            initializeEventListeners();
+        }
+
+        function initializeEventListeners() {
+            document.getElementById('status-filter').addEventListener('change', filterListings);
+            document.getElementById('sort-by').addEventListener('change', sortListings);
+            document.getElementById('edit-form').addEventListener('submit', handleUpdateListing);
+        }
+
+        async function loadListings() {
+            const loadingSpinner = document.getElementById('listings-loading');
+            const listingsGrid = document.getElementById('listings-grid');
+            const noListings = document.getElementById('no-listings');
+
+            try {
+                loadingSpinner.style.display = 'block';
+                listingsGrid.style.display = 'none';
+                noListings.style.display = 'none';
+
+                const user = getCurrentUser();
+                if (!user) return;
+
+                const listingsQuery = query(
+                    collection(db, 'listings'),
+                    where('sellerId', '==', user.uid),
+                    orderBy('createdAt', 'desc')
+                );
+
+                const snapshot = await getDocs(listingsQuery);
+                allListings = [];
+
+                snapshot.forEach(doc => {
+                    allListings.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+
+                filteredListings = [...allListings];
+                displayListings(filteredListings);
+
+            } catch (error) {
+                console.error('Error loading listings:', error);
+                showNotification('Error loading listings', 'error');
+            } finally {
+                loadingSpinner.style.display = 'none';
+            }
+        }
+
+        function displayListings(listings) {
+            const listingsGrid = document.getElementById('listings-grid');
+            const noListings = document.getElementById('no-listings');
+
+            if (listings.length === 0) {
+                listingsGrid.style.display = 'none';
+                noListings.style.display = 'block';
+                return;
+            }
+
+            noListings.style.display = 'none';
+            listingsGrid.style.display = 'grid';
+
+            const listingsHTML = listings.map(listing => createListingCard(listing)).join('');
+            listingsGrid.innerHTML = listingsHTML;
+        }
+
+        function createListingCard(listing) {
+            const statusClass = listing.status || 'active';
+            return `
+                <div class="listing-card ${statusClass}">
+                    <div class="listing-image">
+                        <i class="fas fa-image"></i>
+                        <div class="listing-status status-${statusClass}">${statusClass}</div>
+                    </div>
+                    <div class="listing-info">
+                        <h3>${listing.title}</h3>
+                        <p class="listing-description">${listing.description.substring(0, 100)}...</p>
+                        <div class="listing-meta">
+                            <span class="price">${formatCurrency(listing.price)}</span>
+                            <span class="category">${listing.category}</span>
+                        </div>
+                        <div class="listing-stats">
+                            <span><i class="fas fa-eye"></i> ${listing.views || 0} views</span>
+                            <span><i class="fas fa-star"></i> ${listing.rating || 0} rating</span>
+                        </div>
+                        <div class="listing-date">
+                            Listed: ${formatDate(listing.createdAt)}
+                        </div>
+                    </div>
+                    <div class="listing-actions">
+                        <button class="btn btn-sm btn-outline" onclick="editListing('${listing.id}')">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteListing('${listing.id}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                        <button class="btn btn-sm btn-primary" onclick="toggleStatus('${listing.id}', '${statusClass}')">
+                            <i class="fas fa-toggle-on"></i> ${statusClass === 'active' ? 'Deactivate' : 'Activate'}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function filterListings() {
+            const statusFilter = document.getElementById('status-filter').value;
+            
+            if (!statusFilter) {
+                filteredListings = [...allListings];
+            } else {
+                filteredListings = allListings.filter(listing => 
+                    (listing.status || 'active') === statusFilter
+                );
+            }
+            
+            displayListings(filteredListings);
+        }
+
+        function sortListings() {
+            const sortBy = document.getElementById('sort-by').value;
+            
+            switch (sortBy) {
+                case 'newest':
+                    filteredListings.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    break;
+                case 'oldest':
+                    filteredListings.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                    break;
+                case 'price-high':
+                    filteredListings.sort((a, b) => b.price - a.price);
+                    break;
+                case 'price-low':
+                    filteredListings.sort((a, b) => a.price - b.price);
+                    break;
+                case 'views':
+                    filteredListings.sort((a, b) => (b.views || 0) - (a.views || 0));
+                    break;
+            }
+            
+            displayListings(filteredListings);
+        }
+
+        window.editListing = function(listingId) {
+            const listing = allListings.find(l => l.id === listingId);
+            if (!listing) return;
+
+            document.getElementById('edit-listing-id').value = listingId;
+            document.getElementById('edit-title').value = listing.title;
+            document.getElementById('edit-description').value = listing.description;
+            document.getElementById('edit-price').value = listing.price;
+            document.getElementById('edit-category').value = listing.category;
+            document.getElementById('edit-condition').value = listing.condition;
+
+            document.getElementById('edit-modal').style.display = 'block';
+        };
+
+        window.closeEditModal = function() {
+            document.getElementById('edit-modal').style.display = 'none';
+        };
+
+        async function handleUpdateListing(event) {
+            event.preventDefault();
+            
+            const listingId = document.getElementById('edit-listing-id').value;
+            const updates = {
+                title: document.getElementById('edit-title').value,
+                description: document.getElementById('edit-description').value,
+                price: parseFloat(document.getElementById('edit-price').value),
+                category: document.getElementById('edit-category').value,
+                condition: document.getElementById('edit-condition').value,
+                updatedAt: new Date()
+            };
+
+            try {
+                await updateDoc(doc(db, 'listings', listingId), updates);
+                showNotification('Listing updated successfully!', 'success');
+                closeEditModal();
+                await loadListings(); // Reload listings
+            } catch (error) {
+                console.error('Error updating listing:', error);
+                showNotification('Error updating listing', 'error');
+            }
+        }
+
+        window.deleteListing = async function(listingId) {
+            if (!confirm('Are you sure you want to delete this listing? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                await deleteDoc(doc(db, 'listings', listingId));
+                showNotification('Listing deleted successfully!', 'success');
+                await loadListings(); // Reload listings
+            } catch (error) {
+                console.error('Error deleting listing:', error);
+                showNotification('Error deleting listing', 'error');
+            }
+        };
+
+        window.toggleStatus = async function(listingId, currentStatus) {
+            const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+            
+            try {
+                await updateDoc(doc(db, 'listings', listingId), {
+                    status: newStatus,
+                    updatedAt: new Date()
+                });
+                showNotification(`Listing ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully!`, 'success');
+                await loadListings(); // Reload listings
+            } catch (error) {
+                console.error('Error updating listing status:', error);
+                showNotification('Error updating listing status', 'error');
+            }
+        };
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('edit-modal');
+            if (event.target === modal) {
+                closeEditModal();
+            }
+        });
+    </script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/app.js"></script>
+</body>
+
+</html>

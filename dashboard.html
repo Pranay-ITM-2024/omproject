@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - P2P Marketplace</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-store"></i>
+                <span>P2P Marketplace</span>
+            </div>
+            <div class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="dashboard.html" class="nav-link active">Dashboard</a>
+                <a href="pages/browse.html" class="nav-link">Browse</a>
+                <a href="pages/seller.html" class="nav-link nav-seller-only">Sell</a>
+                <a href="pages/analytics.html" class="nav-link nav-seller-only">Analytics</a>
+                <a href="pages/my-listings.html" class="nav-link nav-seller-only">My Listings</a>
+                <a href="pages/matching.html" class="nav-link">Smart Match</a>
+                <a href="pages/history.html" class="nav-link nav-buyer-only">History</a>
+                <a href="pages/support.html" class="nav-link">Support</a>
+                <a href="pages/admin.html" class="nav-link nav-admin-only">Admin</a>
+                <div class="nav-user" id="nav-user">
+                    <span id="user-email"></span>
+                    <button class="btn btn-outline" id="logout-btn">Logout</button>
+                </div>
+                <button class="theme-toggle" id="theme-toggle">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="dashboard-container">
+        <div class="container">
+            <div class="dashboard-header">
+                <h1>Welcome to your Dashboard</h1>
+                <p id="user-role-info">Loading your information...</p>
+            </div>
+
+            <div class="dashboard-content">
+                <div class="dashboard-cards">
+                    <!-- Buyer Dashboard -->
+                    <div id="buyer-dashboard" class="dashboard-section" style="display: none;">
+                        <h2>Buyer Dashboard</h2>
+                        <div class="card-grid">
+                            <div class="dashboard-card">
+                                <i class="fas fa-search"></i>
+                                <h3>Browse Products</h3>
+                                <p>Find products using our smart matching algorithm</p>
+                                <a href="pages/browse.html" class="btn btn-primary">Start Shopping</a>
+                            </div>
+                            <div class="dashboard-card">
+                                <i class="fas fa-magic"></i>
+                                <h3>Smart Matching</h3>
+                                <p>Get personalized product recommendations</p>
+                                <a href="pages/matching.html" class="btn btn-outline">Find Matches</a>
+                            </div>
+                            <div class="dashboard-card">
+                                <i class="fas fa-history"></i>
+                                <h3>Purchase History</h3>
+                                <p>View your past purchases and transactions</p>
+                                <a href="pages/history.html" class="btn btn-outline">View History</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Seller Dashboard -->
+                    <div id="seller-dashboard" class="dashboard-section" style="display: none;">
+                        <h2>Seller Dashboard</h2>
+                        <div class="card-grid">
+                            <div class="dashboard-card">
+                                <i class="fas fa-plus"></i>
+                                <h3>Add New Listing</h3>
+                                <p>Create a new product listing</p>
+                                <a href="pages/seller.html" class="btn btn-primary">Add Product</a>
+                            </div>
+                            <div class="dashboard-card">
+                                <i class="fas fa-list"></i>
+                                <h3>My Listings</h3>
+                                <p>Manage your existing product listings</p>
+                                <a href="pages/my-listings.html" class="btn btn-outline">View Listings</a>
+                            </div>
+                            <div class="dashboard-card">
+                                <i class="fas fa-chart-line"></i>
+                                <h3>Analytics</h3>
+                                <p>View your sales performance and feedback</p>
+                                <a href="pages/analytics.html" class="btn btn-outline">View Analytics</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Admin Dashboard -->
+                    <div id="admin-dashboard" class="dashboard-section" style="display: none;">
+                        <h2>Admin Dashboard</h2>
+                        <div class="card-grid">
+                            <div class="dashboard-card">
+                                <i class="fas fa-ticket-alt"></i>
+                                <h3>Support Tickets</h3>
+                                <p>Manage customer support tickets</p>
+                                <a href="pages/admin.html" class="btn btn-primary">View Tickets</a>
+                            </div>
+                            <div class="dashboard-card">
+                                <i class="fas fa-chart-bar"></i>
+                                <h3>Platform Analytics</h3>
+                                <p>View platform-wide statistics and metrics</p>
+                                <a href="pages/admin.html" class="btn btn-outline">View Analytics</a>
+                            </div>
+                            <div class="dashboard-card">
+                                <i class="fas fa-users"></i>
+                                <h3>User Management</h3>
+                                <p>Manage users and their roles</p>
+                                <a href="pages/admin.html" class="btn btn-outline">Manage Users</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="recent-activity">
+                    <h3>Recent Activity</h3>
+                    <div id="activity-list" class="activity-list">
+                        <p>Loading your recent activity...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="js/firebase.js"></script>
+    <script type="module" src="js/app.js"></script>
+    <script type="module" src="js/dashboard.js"></script>
+    
+    <!-- Inline Theme System for Immediate Functionality -->
+    <script>
+        // Immediate theme system - works before app.js loads
+        (function() {
+            console.log('Inline theme script running...');
+            
+            // Apply saved theme immediately
+            const savedTheme = localStorage.getItem('marketplace-theme') || 'light';
+            console.log('Applying saved theme:', savedTheme);
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            if (savedTheme === 'dark') {
+                document.body.classList.add('theme-dark');
+            }
+            
+            // Set up theme toggle when DOM is ready
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('Setting up inline theme toggle...');
+                const themeToggle = document.getElementById('theme-toggle');
+                const themeIcon = document.getElementById('theme-icon');
+                
+                if (themeToggle) {
+                    console.log('Found theme toggle, adding listener');
+                    
+                    // Update icon based on current theme
+                    if (savedTheme === 'dark' && themeIcon) {
+                        themeIcon.className = 'fas fa-sun';
+                    }
+                    
+                    themeToggle.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        console.log('Theme toggle clicked!');
+                        
+                        const currentTheme = document.documentElement.getAttribute('data-theme');
+                        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                        
+                        console.log('Switching from', currentTheme, 'to', newTheme);
+                        
+                        // Apply new theme
+                        document.documentElement.setAttribute('data-theme', newTheme);
+                        document.body.className = document.body.className.replace('theme-dark', '');
+                        if (newTheme === 'dark') {
+                            document.body.classList.add('theme-dark');
+                        }
+                        
+                        // Update icon
+                        if (themeIcon) {
+                            themeIcon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+                        }
+                        
+                        // Save preference
+                        localStorage.setItem('marketplace-theme', newTheme);
+                        
+                        console.log('Theme changed to:', newTheme);
+                    });
+                } else {
+                    console.log('Theme toggle button not found!');
+                }
+            });
+        })();
+    </script>
+    <script src="js/theme.js"></script>
+</body>
+
+</html>

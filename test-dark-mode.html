@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Mode Test</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🌙 Dark Mode Test Page</h1>
+        
+        <div class="test-section">
+            <h2>Theme Toggle Test</h2>
+            <button id="theme-toggle" class="theme-toggle">
+                <span class="theme-icon">🌙</span>
+            </button>
+            <p>Click the moon/sun icon above to toggle themes!</p>
+        </div>
+
+        <div class="test-section">
+            <h2>Visual Test Elements</h2>
+            <div class="card">
+                <h3>Sample Card</h3>
+                <p>This card should change colors when you switch themes.</p>
+                <button class="btn btn-primary">Primary Button</button>
+                <button class="btn btn-secondary">Secondary Button</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>Debug Information</h2>
+            <div id="debug-info">
+                <p><strong>Current Theme:</strong> <span id="current-theme">light</span></p>
+                <p><strong>Theme Attribute:</strong> <span id="theme-attr">N/A</span></p>
+                <p><strong>Background Color:</strong> <span id="bg-color">N/A</span></p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>Manual Controls</h2>
+            <button onclick="updateTheme('light')" class="btn">Force Light</button>
+            <button onclick="updateTheme('dark')" class="btn">Force Dark</button>
+            <button onclick="testTheme()" class="btn">Test Toggle</button>
+            <button onclick="updateDebugInfo()" class="btn">Update Debug</button>
+        </div>
+    </div>
+
+    <!-- Load theme system -->
+    <script src="js/theme.js"></script>
+    <script src="js/app.js"></script>
+    
+    <script>
+        // Debug information updater
+        function updateDebugInfo() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const computedStyles = window.getComputedStyle(document.documentElement);
+            const bgColor = computedStyles.getPropertyValue('--bg-primary');
+            
+            document.getElementById('current-theme').textContent = currentTheme;
+            document.getElementById('theme-attr').textContent = currentTheme;
+            document.getElementById('bg-color').textContent = bgColor || 'Not set';
+            
+            console.log('Debug Info Updated:', {
+                theme: currentTheme,
+                bgColor: bgColor,
+                localStorage: localStorage.getItem('marketplace-theme')
+            });
+        }
+
+        // Auto-update debug info every 2 seconds
+        setInterval(updateDebugInfo, 2000);
+        
+        // Initial debug update
+        updateDebugInfo();
+        
+        console.log('🌙 Dark Mode Test Page Loaded!');
+        console.log('Theme system functions available:', {
+            toggleTheme: typeof window.toggleTheme,
+            updateTheme: typeof window.updateTheme,
+            testTheme: typeof window.testTheme
+        });
+    </script>
+</body>
+</html>

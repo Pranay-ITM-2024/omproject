@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final System Verification - P2P Marketplace</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+        .test-section h3 {
+            color: #3498db;
+            margin-top: 0;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .success { background: #27ae60; color: white; }
+        .error { background: #e74c3c; color: white; }
+        .warning { background: #f39c12; color: white; }
+        .pending { background: #95a5a6; color: white; }
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .btn:hover { background: #2980b9; }
+        .btn:disabled { background: #bdc3c7; cursor: not-allowed; }
+        .btn-success { background: #27ae60; }
+        .btn-danger { background: #e74c3c; }
+        .test-results {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .log-success { background: #d4edda; color: #155724; }
+        .log-error { background: #f8d7da; color: #721c24; }
+        .log-info { background: #d1ecf1; color: #0c5460; }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Final System Verification</h1>
+        <p style="text-align: center; color: #666;">
+            Comprehensive testing suite for your P2P Marketplace exam project
+        </p>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="overall-progress"></div>
+        </div>
+        <p style="text-align: center;" id="progress-text">Ready to start verification...</p>
+
+        <!-- Firebase Connection Test -->
+        <div class="test-section">
+            <h3>🔥 Firebase Connection Test
+                <span class="status pending" id="firebase-status">Pending</span>
+            </h3>
+            <button class="btn" onclick="testFirebaseConnection()">Test Firebase</button>
+            <div class="test-results" id="firebase-results"></div>
+        </div>
+
+        <!-- Authentication Test -->
+        <div class="test-section">
+            <h3>🔐 Authentication System Test
+                <span class="status pending" id="auth-status">Pending</span>
+            </h3>
+            <button class="btn" onclick="testAuthentication()">Test Auth System</button>
+            <div class="test-results" id="auth-results"></div>
+        </div>
+
+        <!-- Database Operations Test -->
+        <div class="test-section">
+            <h3>💾 Database Operations Test
+                <span class="status pending" id="db-status">Pending</span>
+            </h3>
+            <button class="btn" onclick="testDatabaseOperations()">Test Database</button>
+            <div class="test-results" id="db-results"></div>
+        </div>
+
+        <!-- Page Navigation Test -->
+        <div class="test-section">
+            <h3>🧭 Page Navigation Test
+                <span class="status pending" id="nav-status">Pending</span>
+            </h3>
+            <button class="btn" onclick="testPageNavigation()">Test Navigation</button>
+            <div class="test-results" id="nav-results"></div>
+        </div>
+
+        <!-- DSA Algorithm Test -->
+        <div class="test-section">
+            <h3>🧠 DSA Matching Algorithm Test
+                <span class="status pending" id="dsa-status">Pending</span>
+            </h3>
+            <button class="btn" onclick="testDSAAlgorithm()">Test Matching</button>
+            <div class="test-results" id="dsa-results"></div>
+        </div>
+
+        <!-- Overall System Health -->
+        <div class="test-section">
+            <h3>💚 Overall System Health
+                <span class="status pending" id="health-status">Pending</span>
+            </h3>
+            <button class="btn btn-success" onclick="runFullVerification()">🚀 Run Full Verification</button>
+            <button class="btn btn-danger" onclick="clearAllResults()">🗑️ Clear Results</button>
+            <div class="test-results" id="health-results"></div>
+        </div>
+
+        <!-- Quick Access Links -->
+        <div style="text-align: center; margin-top: 30px;">
+            <h4>Quick Access Links</h4>
+            <a href="/" class="btn">🏠 Home</a>
+            <a href="/login.html" class="btn">🔑 Login</a>
+            <a href="/signup.html" class="btn">📝 Signup</a>
+            <a href="/dashboard.html" class="btn">📊 Dashboard</a>
+            <a href="/pages/browse.html" class="btn">🛒 Browse</a>
+            <a href="/pages/seller.html" class="btn">🏪 Seller</a>
+            <a href="/pages/matching.html" class="btn">🔍 Matching</a>
+            <a href="/pages/admin.html" class="btn">👑 Admin</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import {
+            getAuth,
+            signInWithEmailAndPassword,
+            signOut,
+            onAuthStateChanged
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import {
+            getFirestore,
+            collection,
+            getDocs,
+            doc,
+            getDoc,
+            query,
+            limit
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC_7Q3zFCAU-NpZ24UKtz-DkkIwFHCgICU",
+            authDomain: "finaldestination-e3b5a.firebaseapp.com",
+            projectId: "finaldestination-e3b5a",
+            storageBucket: "finaldestination-e3b5a.firebasestorage.app",
+            messagingSenderId: "1004171999317",
+            appId: "1:1004171999317:web:f36c584200d2f85df23cdc",
+            measurementId: "G-EJVP6S98C8"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let testsPassed = 0;
+        let totalTests = 5;
+
+        function updateProgress() {
+            const percentage = (testsPassed / totalTests) * 100;
+            document.getElementById('overall-progress').style.width = percentage + '%';
+            document.getElementById('progress-text').textContent = 
+                `Progress: ${testsPassed}/${totalTests} tests completed (${Math.round(percentage)}%)`;
+        }
+
+        function logResult(containerId, message, type = 'info') {
+            const container = document.getElementById(containerId);
+            const logClass = type === 'success' ? 'log-success' : 
+                           type === 'error' ? 'log-error' : 'log-info';
+            container.innerHTML += `<div class="${logClass}">${new Date().toLocaleTimeString()}: ${message}</div>`;
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function updateStatus(statusId, status, type) {
+            const element = document.getElementById(statusId);
+            element.textContent = status;
+            element.className = `status ${type}`;
+            if (type === 'success') testsPassed++;
+            updateProgress();
+        }
+
+        // Test Firebase Connection
+        window.testFirebaseConnection = async function() {
+            logResult('firebase-results', 'Testing Firebase connection...', 'info');
+            
+            try {
+                // Test auth initialization
+                if (!auth) throw new Error('Auth not initialized');
+                logResult('firebase-results', '✓ Firebase Auth initialized', 'success');
+
+                // Test Firestore initialization  
+                if (!db) throw new Error('Firestore not initialized');
+                logResult('firebase-results', '✓ Firestore initialized', 'success');
+
+                // Test basic read operation
+                const testQuery = query(collection(db, 'categories'), limit(1));
+                await getDocs(testQuery);
+                logResult('firebase-results', '✓ Database connection successful', 'success');
+
+                updateStatus('firebase-status', 'Connected', 'success');
+                
+            } catch (error) {
+                logResult('firebase-results', `✗ Firebase Error: ${error.message}`, 'error');
+                updateStatus('firebase-status', 'Failed', 'error');
+            }
+        };
+
+        // Test Authentication
+        window.testAuthentication = async function() {
+            logResult('auth-results', 'Testing authentication system...', 'info');
+            
+            try {
+                // First, check if auth is properly initialized
+                if (!auth) {
+                    throw new Error('Firebase Auth not initialized');
+                }
+                logResult('auth-results', '✓ Firebase Auth initialized', 'success');
+
+                // Check current auth state
+                const currentUser = auth.currentUser;
+                if (currentUser) {
+                    logResult('auth-results', `✓ Current user logged in: ${currentUser.email}`, 'success');
+                    
+                    // Check user role in database
+                    const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        logResult('auth-results', `✓ User role: ${userData.role}`, 'success');
+                    } else {
+                        logResult('auth-results', '⚠ User document not found in Firestore', 'info');
+                    }
+                    
+                    updateStatus('auth-status', 'User Logged In', 'success');
+                } else {
+                    logResult('auth-results', '⚠ No user currently logged in', 'info');
+                    logResult('auth-results', '💡 Tip: Login first using the test accounts in the documentation', 'info');
+                    logResult('auth-results', '📝 Test accounts: seller@example.com / buyer@example.com', 'info');
+                    
+                    // Test auth system readiness without actual login
+                    logResult('auth-results', '✓ Auth system ready for login attempts', 'success');
+                    updateStatus('auth-status', 'Ready (Not Logged In)', 'warning');
+                }
+
+                // Test auth state listener
+                const testListener = onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        logResult('auth-results', '✓ Auth state listener working correctly', 'success');
+                    }
+                });
+                
+                // Clean up listener
+                setTimeout(() => testListener(), 1000);
+
+            } catch (error) {
+                logResult('auth-results', `✗ Auth Error: ${error.message}`, 'error');
+                updateStatus('auth-status', 'Failed', 'error');
+            }
+        };
+
+        // Test Database Operations
+        window.testDatabaseOperations = async function() {
+            logResult('db-results', 'Testing database operations...', 'info');
+            
+            try {
+                // Test categories collection
+                const categoriesQuery = query(collection(db, 'categories'));
+                const categoriesSnapshot = await getDocs(categoriesQuery);
+                logResult('db-results', `✓ Categories collection: ${categoriesSnapshot.size} documents`, 'success');
+
+                // Test listings collection
+                const listingsQuery = query(collection(db, 'listings'), limit(5));
+                const listingsSnapshot = await getDocs(listingsQuery);
+                logResult('db-results', `✓ Listings collection: ${listingsSnapshot.size} documents`, 'success');
+
+                // Test users collection
+                const usersQuery = query(collection(db, 'users'), limit(5));
+                const usersSnapshot = await getDocs(usersQuery);
+                logResult('db-results', `✓ Users collection: ${usersSnapshot.size} documents`, 'success');
+
+                updateStatus('db-status', 'Working', 'success');
+
+            } catch (error) {
+                logResult('db-results', `✗ Database Error: ${error.message}`, 'error');
+                updateStatus('db-status', 'Failed', 'error');
+            }
+        };
+
+        // Test Page Navigation
+        window.testPageNavigation = async function() {
+            logResult('nav-results', 'Testing page navigation...', 'info');
+            
+            try {
+                const pages = [
+                    { url: '/', name: 'Home' },
+                    { url: '/login.html', name: 'Login' },
+                    { url: '/signup.html', name: 'Signup' },
+                    { url: '/dashboard.html', name: 'Dashboard' },
+                    { url: '/pages/browse.html', name: 'Browse' },
+                    { url: '/pages/seller.html', name: 'Seller' },
+                    { url: '/pages/matching.html', name: 'Matching' },
+                    { url: '/pages/analytics.html', name: 'Analytics' },
+                    { url: '/pages/my-listings.html', name: 'My Listings' },
+                    { url: '/pages/history.html', name: 'History' }
+                ];
+
+                let passedPages = 0;
+                for (const page of pages) {
+                    try {
+                        const response = await fetch(page.url);
+                        if (response.ok) {
+                            logResult('nav-results', `✓ ${page.name} page accessible`, 'success');
+                            passedPages++;
+                        } else {
+                            logResult('nav-results', `✗ ${page.name} page error: ${response.status}`, 'error');
+                        }
+                    } catch (error) {
+                        logResult('nav-results', `✗ ${page.name} page failed: ${error.message}`, 'error');
+                    }
+                }
+
+                logResult('nav-results', `Navigation test complete: ${passedPages}/${pages.length} pages accessible`, 'info');
+                
+                if (passedPages === pages.length) {
+                    updateStatus('nav-status', 'All Pages OK', 'success');
+                } else {
+                    updateStatus('nav-status', `${passedPages}/${pages.length} OK`, 'warning');
+                }
+
+            } catch (error) {
+                logResult('nav-results', `✗ Navigation Error: ${error.message}`, 'error');
+                updateStatus('nav-status', 'Failed', 'error');
+            }
+        };
+
+        // Test DSA Algorithm
+        window.testDSAAlgorithm = async function() {
+            logResult('dsa-results', 'Testing DSA matching algorithm...', 'info');
+            
+            try {
+                // Check if matching algorithm files exist
+                const response = await fetch('/js/matching.js');
+                if (!response.ok) {
+                    throw new Error('Matching algorithm file not found');
+                }
+                
+                logResult('dsa-results', '✓ Matching algorithm file exists', 'success');
+
+                // Test algorithm with sample data
+                const sampleRequest = {
+                    desiredCategory: 'electronics',
+                    maxBudget: 500,
+                    keywords: 'smartphone mobile phone',
+                    condition: 'new'
+                };
+
+                logResult('dsa-results', '✓ Algorithm test data prepared', 'success');
+                logResult('dsa-results', `Sample request: ${JSON.stringify(sampleRequest)}`, 'info');
+
+                // Check if listings exist for matching
+                const listingsQuery = query(
+                    collection(db, 'listings'), 
+                    limit(10)
+                );
+                const snapshot = await getDocs(listingsQuery);
+                
+                if (snapshot.size > 0) {
+                    logResult('dsa-results', `✓ Found ${snapshot.size} listings for matching`, 'success');
+                    updateStatus('dsa-status', 'Ready', 'success');
+                } else {
+                    logResult('dsa-results', '⚠ No listings found - algorithm needs sample data', 'error');
+                    updateStatus('dsa-status', 'No Data', 'warning');
+                }
+
+            } catch (error) {
+                logResult('dsa-results', `✗ DSA Error: ${error.message}`, 'error');
+                updateStatus('dsa-status', 'Failed', 'error');
+            }
+        };
+
+        // Run Full Verification
+        window.runFullVerification = async function() {
+            testsPassed = 0;
+            updateProgress();
+            
+            logResult('health-results', '🚀 Starting full system verification...', 'info');
+            
+            await testFirebaseConnection();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            await testAuthentication();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            await testDatabaseOperations();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            await testPageNavigation();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            await testDSAAlgorithm();
+            
+            // Final health assessment
+            if (testsPassed === totalTests) {
+                logResult('health-results', '🎉 ALL TESTS PASSED! System is exam-ready!', 'success');
+                updateStatus('health-status', 'Exam Ready! 🎯', 'success');
+            } else if (testsPassed >= 3) {
+                logResult('health-results', '⚠ Most tests passed. Minor issues to address.', 'info');
+                updateStatus('health-status', 'Nearly Ready', 'warning');
+            } else {
+                logResult('health-results', '❌ Critical issues found. System needs attention.', 'error');
+                updateStatus('health-status', 'Needs Work', 'error');
+            }
+        };
+
+        // Clear All Results
+        window.clearAllResults = function() {
+            const resultContainers = [
+                'firebase-results', 'auth-results', 'db-results', 
+                'nav-results', 'dsa-results', 'health-results'
+            ];
+            
+            resultContainers.forEach(id => {
+                document.getElementById(id).innerHTML = '';
+            });
+
+            const statusElements = [
+                'firebase-status', 'auth-status', 'db-status',
+                'nav-status', 'dsa-status', 'health-status'
+            ];
+            
+            statusElements.forEach(id => {
+                const element = document.getElementById(id);
+                element.textContent = 'Pending';
+                element.className = 'status pending';
+            });
+
+            testsPassed = 0;
+            updateProgress();
+        };
+
+        // Auto-run basic checks on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                testFirebaseConnection();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

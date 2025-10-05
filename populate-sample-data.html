@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Populate Sample Data - P2P Marketplace</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>📦 Populate Sample Data</h1>
+
+        <div class="warning">
+            <strong>⚠️ Note:</strong> This will add comprehensive sample data to your Firestore database including
+            users, listings, and test data.
+        </div>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <button id="populateBtn" onclick="populateData()">Populate Sample Data</button>
+            <button onclick="clearLog()">Clear Log</button>
+        </div>
+
+        <div id="log" class="log">Click "Populate Sample Data" to start...</div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import {
+            getFirestore,
+            collection,
+            addDoc,
+            doc,
+            setDoc
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC_7Q3zFCAU-NpZ24UKtz-DkkIwFHCgICU",
+            authDomain: "finaldestination-e3b5a.firebaseapp.com",
+            projectId: "finaldestination-e3b5a",
+            storageBucket: "finaldestination-e3b5a.firebasestorage.app",
+            messagingSenderId: "1004171999317",
+            appId: "1:1004171999317:web:f36c584200d2f85df23cdc",
+            measurementId: "G-EJVP6S98C8"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        function log(message) {
+            const logElement = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.textContent += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        window.clearLog = function () {
+            document.getElementById('log').textContent = '';
+        };
+
+        async function populateData() {
+            const btn = document.getElementById('populateBtn');
+            btn.disabled = true;
+            btn.textContent = 'Populating...';
+
+            try {
+                log('🚀 Starting data population...');
+
+                // Create sample users
+                await createSampleUsers();
+
+                // Create sample listings
+                await createSampleListings();
+
+                // Create sample purchase requests
+                await createSamplePurchaseRequests();
+
+                // Create sample feedback
+                await createSampleFeedback();
+
+                // Create sample tickets
+                await createSampleTickets();
+
+                log('✅ Data population completed successfully!');
+                log('🎉 Your marketplace now has comprehensive sample data!');
+
+                const successDiv = document.createElement('div');
+                successDiv.className = 'success';
+                successDiv.innerHTML = '<strong>✅ Success!</strong> Sample data has been populated successfully. Your marketplace is now ready for testing!';
+                document.querySelector('.container').insertBefore(successDiv, document.getElementById('log'));
+
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+                console.error('Error:', error);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Populate Sample Data';
+            }
+        }
+
+        async function createSampleUsers() {
+            log('👥 Creating sample users...');
+
+            const users = [
+                {
+                    uid: 'buyer1',
+                    email: 'buyer1@test.com',
+                    role: 'buyer',
+                    profile: { firstName: 'Alice', lastName: 'Johnson', phone: '+1-555-0001' },
+                    createdAt: new Date()
+                },
+                {
+                    uid: 'buyer2',
+                    email: 'buyer2@test.com',
+                    role: 'buyer',
+                    profile: { firstName: 'Bob', lastName: 'Smith', phone: '+1-555-0002' },
+                    createdAt: new Date()
+                },
+                {
+                    uid: 'seller1',
+                    email: 'seller1@test.com',
+                    role: 'seller',
+                    profile: { firstName: 'Carol', lastName: 'Davis', phone: '+1-555-0003' },
+                    sellerProfile: { businessName: 'TechDeals', rating: 4.8, totalSales: 25 },
+                    createdAt: new Date()
+                },
+                {
+                    uid: 'seller2',
+                    email: 'seller2@test.com',
+                    role: 'seller',
+                    profile: { firstName: 'David', lastName: 'Wilson', phone: '+1-555-0004' },
+                    sellerProfile: { businessName: 'FashionHub', rating: 4.6, totalSales: 18 },
+                    createdAt: new Date()
+                },
+                {
+                    uid: 'admin1',
+                    email: 'admin@test.com',
+                    role: 'admin',
+                    profile: { firstName: 'Admin', lastName: 'User', phone: '+1-555-0005' },
+                    createdAt: new Date()
+                }
+            ];
+
+            for (const user of users) {
+                await setDoc(doc(db, 'users', user.uid), user);
+                log(`  ✓ Created user: ${user.email} (${user.role})`);
+            }
+        }
+
+        async function createSampleListings() {
+            log('📦 Creating sample listings...');
+
+            const listings = [
+                {
+                    title: 'iPhone 14 Pro Max 256GB',
+                    description: 'Brand new iPhone 14 Pro Max in Space Black. Unlocked, includes original box and accessories.',
+                    category: 'electronics',
+                    price: 1099.99,
+                    condition: 'new',
+                    keywords: 'iphone, apple, smartphone, pro max, 256gb',
+                    location: 'New York, NY',
+                    sellerId: 'seller1',
+                    sellerEmail: 'seller1@test.com',
+                    status: 'active',
+                    views: 45,
+                    rating: 4.8,
+                    ratingCount: 12,
+                    createdAt: new Date()
+                },
+                {
+                    title: 'MacBook Air M2 13-inch',
+                    description: 'Excellent condition MacBook Air with M2 chip. Perfect for students and professionals.',
+                    category: 'electronics',
+                    price: 899.99,
+                    condition: 'like-new',
+                    keywords: 'macbook, laptop, apple, m2, air',
+                    location: 'San Francisco, CA',
+                    sellerId: 'seller1',
+                    sellerEmail: 'seller1@test.com',
+                    status: 'active',
+                    views: 32,
+                    rating: 4.9,
+                    ratingCount: 8,
+                    createdAt: new Date()
+                },
+                {
+                    title: 'Designer Leather Jacket',
+                    description: 'Vintage leather jacket in excellent condition. Size Large. Perfect for motorcycle riding.',
+                    category: 'clothing',
+                    price: 149.99,
+                    condition: 'good',
+                    keywords: 'leather, jacket, vintage, motorcycle, large',
+                    location: 'Los Angeles, CA',
+                    sellerId: 'seller2',
+                    sellerEmail: 'seller2@test.com',
+                    status: 'active',
+                    views: 28,
+                    rating: 4.5,
+                    ratingCount: 6,
+                    createdAt: new Date()
+                },
+                {
+                    title: 'Programming Books Bundle',
+                    description: 'Collection of programming books: JavaScript, Python, React, Node.js. Great for developers.',
+                    category: 'books',
+                    price: 75.00,
+                    condition: 'good',
+                    keywords: 'programming, books, javascript, python, react',
+                    location: 'Seattle, WA',
+                    sellerId: 'seller1',
+                    sellerEmail: 'seller1@test.com',
+                    status: 'active',
+                    views: 15,
+                    rating: 4.7,
+                    ratingCount: 4,
+                    createdAt: new Date()
+                },
+                {
+                    title: 'Yoga Mat Premium',
+                    description: 'High-quality yoga mat with carrying strap. Non-slip surface, perfect for home workouts.',
+                    category: 'sports',
+                    price: 39.99,
+                    condition: 'new',
+                    keywords: 'yoga, mat, fitness, workout, home',
+                    location: 'Austin, TX',
+                    sellerId: 'seller2',
+                    sellerEmail: 'seller2@test.com',
+                    status: 'active',
+                    views: 22,
+                    rating: 4.6,
+                    ratingCount: 7,
+                    createdAt: new Date()
+                },
+                {
+                    title: 'Coffee Maker Deluxe',
+                    description: 'Programmable coffee maker with timer and auto-shutoff. Makes 12 cups, includes carafe.',
+                    category: 'home',
+                    price: 89.99,
+                    condition: 'like-new',
+                    keywords: 'coffee, maker, kitchen, programmable, 12 cup',
+                    location: 'Chicago, IL',
+                    sellerId: 'seller1',
+                    sellerEmail: 'seller1@test.com',
+                    status: 'active',
+                    views: 18,
+                    rating: 4.4,
+                    ratingCount: 5,
+                    createdAt: new Date()
+                }
+            ];
+
+            for (const listing of listings) {
+                const docRef = await addDoc(collection(db, 'listings'), listing);
+                log(`  ✓ Created listing: ${listing.title} ($${listing.price})`);
+            }
+        }
+
+        async function createSamplePurchaseRequests() {
+            log('🛒 Creating sample purchase requests...');
+
+            const requests = [
+                {
+                    desiredCategory: 'electronics',
+                    maxBudget: 1200,
+                    keywords: 'iphone, smartphone, apple',
+                    preferredCondition: 'new',
+                    locationPreference: 'New York',
+                    buyerId: 'buyer1',
+                    buyerEmail: 'buyer1@test.com',
+                    status: 'active',
+                    createdAt: new Date()
+                },
+                {
+                    desiredCategory: 'books',
+                    maxBudget: 100,
+                    keywords: 'programming, javascript, python',
+                    preferredCondition: 'good',
+                    locationPreference: 'Seattle',
+                    buyerId: 'buyer2',
+                    buyerEmail: 'buyer2@test.com',
+                    status: 'active',
+                    createdAt: new Date()
+                }
+            ];
+
+            for (const request of requests) {
+                const docRef = await addDoc(collection(db, 'purchaseRequests'), request);
+                log(`  ✓ Created purchase request: ${request.desiredCategory} ($${request.maxBudget})`);
+            }
+        }
+
+        async function createSampleFeedback() {
+            log('⭐ Creating sample feedback...');
+
+            const feedback = [
+                {
+                    sellerId: 'seller1',
+                    buyerId: 'buyer1',
+                    listingId: 'sample-listing-1',
+                    rating: 5,
+                    feedback: 'Excellent seller! Product was exactly as described and shipped quickly.',
+                    createdAt: new Date()
+                },
+                {
+                    sellerId: 'seller2',
+                    buyerId: 'buyer2',
+                    listingId: 'sample-listing-2',
+                    rating: 4,
+                    feedback: 'Good quality product, fast shipping. Would buy again.',
+                    createdAt: new Date()
+                }
+            ];
+
+            for (const fb of feedback) {
+                const docRef = await addDoc(collection(db, 'feedback'), fb);
+                log(`  ✓ Created feedback: ${fb.rating} stars`);
+            }
+        }
+
+        async function createSampleTickets() {
+            log('🎫 Creating sample support tickets...');
+
+            const tickets = [
+                {
+                    subject: 'How do I contact a seller?',
+                    category: 'technical',
+                    priority: 'medium',
+                    description: 'I want to ask a seller about their product but I can\'t find the contact button.',
+                    userId: 'buyer1',
+                    userEmail: 'buyer1@test.com',
+                    status: 'open',
+                    createdAt: new Date()
+                },
+                {
+                    subject: 'Payment issue',
+                    category: 'billing',
+                    priority: 'high',
+                    description: 'I tried to make a payment but it failed. Can you help?',
+                    userId: 'buyer2',
+                    userEmail: 'buyer2@test.com',
+                    status: 'in-progress',
+                    createdAt: new Date()
+                }
+            ];
+
+            for (const ticket of tickets) {
+                const docRef = await addDoc(collection(db, 'tickets'), ticket);
+                log(`  ✓ Created ticket: ${ticket.subject}`);
+            }
+        }
+
+        window.populateData = populateData;
+    </script>
+</body>
+
+</html>

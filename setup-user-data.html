@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup User Data - P2P Marketplace</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .setup-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 0.5rem 0;
+        }
+
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 0.5rem 0;
+        }
+
+        .step {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .code {
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 0.5rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+            margin: 0.5rem 0;
+        }
+
+        #log-container {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 1rem;
+            margin-top: 1rem;
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="setup-container">
+        <h1>🔥 Setup User Data for Firebase</h1>
+
+        <div class="warning">
+            <strong>⚠️ Important:</strong> This script creates user documents for your existing Firebase Authentication users.
+            Make sure you have already created the users in Firebase Authentication console.
+        </div>
+
+        <div class="info">
+            <strong>📋 Current Users:</strong><br>
+            • buyer@example.com (password: 123456)<br>
+            • seller@example.com (password: 123456)
+        </div>
+
+        <h2>📋 Setup Steps</h2>
+
+        <div class="step">
+            <h3>Step 1: Get User UIDs</h3>
+            <p>Go to your Firebase Console:</p>
+            <ol>
+                <li>Navigate to <strong>Authentication → Users</strong></li>
+                <li>Find the user with email <code>buyer@example.com</code> and copy the UID</li>
+                <li>Find the user with email <code>seller@example.com</code> and copy the UID</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>Step 2: Update Script with UIDs</h3>
+            <p>Open <code>setup-user-data.js</code> and replace these lines:</p>
+            <div class="code">
+                const BUYER_UID = 'REPLACE_WITH_ACTUAL_BUYER_UID';<br>
+                const SELLER_UID = 'REPLACE_WITH_ACTUAL_SELLER_UID';
+            </div>
+            <p>With the actual UIDs you copied from Firebase Console.</p>
+        </div>
+
+        <div class="step">
+            <h3>✅ Step 3: Create User Documents (READY!)</h3>
+            <p>Your UIDs are already configured! Click the button below to create user documents in Firestore:</p>
+            <div class="info">
+                <strong>🎯 Configured UIDs:</strong><br>
+                • Buyer UID: <code>5KarqQeV1zUEWQUn9Prm5SlpJgu2</code><br>
+                • Seller UID: <code>JnyqPLyJtOgsZxikrh7cPw6gZOD3</code>
+            </div>
+            <button id="init-users-btn" class="btn btn-primary">🚀 Create User Documents</button>
+            <p style="margin-top: 10px; font-size: 0.9em; color: #666;">
+                This will create complete user profiles with roles, preferences, and statistics.
+            </p>
+        </div>
+
+        <div class="step">
+            <h3>Step 4: Initialize Database</h3>
+            <p>After creating user documents, run the main database initialization:</p>
+            <a href="init-database.html" class="btn btn-outline">Initialize Full Database</a>
+        </div>
+
+        <h2>📊 Execution Log</h2>
+        <div id="log-container">
+            <div class="info">Ready to create user documents. Click the button above to start.</div>
+        </div>
+
+        <h2>🔍 Manual UID Finder (Alternative)</h2>
+        <div class="info">
+            <p>If you need help finding UIDs, you can use Firebase Authentication API. However, the easiest way is through the Firebase Console as described in Step 1.</p>
+        </div>
+
+        <h2>✅ Expected Results</h2>
+        <div class="step">
+            After successful execution, you should have:
+            <ul>
+                <li>✅ User document for buyer@example.com with buyer role</li>
+                <li>✅ User document for seller@example.com with seller role</li>
+                <li>✅ Complete user profiles with sample data</li>
+                <li>✅ User statistics and preferences initialized</li>
+            </ul>
+        </div>
+
+        <div class="warning">
+            <strong>🚨 Troubleshooting:</strong><br>
+            • If you get "Permission denied" errors, make sure your Firestore rules allow user document creation<br>
+            • If UIDs don't work, double-check you copied them correctly from Firebase Console<br>
+            • Make sure the Firebase project is active and billing is enabled if required
+        </div>
+    </div>
+
+    <script type="module" src="setup-user-data.js"></script>
+</body>
+
+</html>

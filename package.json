@@ -1,0 +1,33 @@
+{
+    "name": "p2p-marketplace",
+    "version": "1.0.0",
+    "description": "A P2P marketplace with DSA matching algorithm and CRM features",
+    "main": "index.html",
+    "scripts": {
+        "dev": "python -m http.server 8000",
+        "build": "echo 'No build process needed for static site'",
+        "deploy": "vercel --prod",
+        "firebase:deploy": "firebase deploy",
+        "firebase:rules": "firebase deploy --only firestore:rules"
+    },
+    "keywords": [
+        "marketplace",
+        "p2p",
+        "ecommerce",
+        "firebase",
+        "javascript",
+        "dsa",
+        "matching-algorithm"
+    ],
+    "author": "P2P Marketplace Team",
+    "license": "MIT",
+    "devDependencies": {
+        "firebase-tools": "^12.0.0"
+    },
+    "dependencies": {
+        "firebase": "^10.7.1"
+    },
+    "engines": {
+        "node": ">=16.0.0"
+    }
+}

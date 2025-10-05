@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Test Accounts - P2P Marketplace</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .account-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+        .account-section h3 {
+            color: #3498db;
+            margin-top: 0;
+        }
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .btn:hover { background: #2980b9; }
+        .btn:disabled { background: #bdc3c7; cursor: not-allowed; }
+        .btn-success { background: #27ae60; }
+        .btn-danger { background: #e74c3c; }
+        .results {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .log-success { background: #d4edda; color: #155724; }
+        .log-error { background: #f8d7da; color: #721c24; }
+        .log-info { background: #d1ecf1; color: #0c5460; }
+        .account-info {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .credentials {
+            font-family: monospace;
+            background: #f1f3f4;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Test Account Creator</h1>
+        <p style="text-align: center; color: #666;">
+            Create test accounts for demonstrating your P2P Marketplace
+        </p>
+
+        <!-- Seller Account -->
+        <div class="account-section">
+            <h3>🏪 Create Seller Account</h3>
+            <div class="account-info">
+                <strong>Account Details:</strong>
+                <div class="credentials">Email: seller@example.com</div>
+                <div class="credentials">Password: seller123</div>
+                <div class="credentials">Role: Seller</div>
+            </div>
+            <button class="btn" onclick="createSellerAccount()">Create Seller Account</button>
+            <div class="results" id="seller-results"></div>
+        </div>
+
+        <!-- Buyer Account -->
+        <div class="account-section">
+            <h3>🛒 Create Buyer Account</h3>
+            <div class="account-info">
+                <strong>Account Details:</strong>
+                <div class="credentials">Email: buyer@example.com</div>
+                <div class="credentials">Password: buyer123</div>
+                <div class="credentials">Role: Buyer</div>
+            </div>
+            <button class="btn" onclick="createBuyerAccount()">Create Buyer Account</button>
+            <div class="results" id="buyer-results"></div>
+        </div>
+
+        <!-- Admin Account -->
+        <div class="account-section">
+            <h3>👑 Create Admin Account</h3>
+            <div class="account-info">
+                <strong>Account Details:</strong>
+                <div class="credentials">Email: admin@example.com</div>
+                <div class="credentials">Password: admin123</div>
+                <div class="credentials">Role: Admin</div>
+            </div>
+            <button class="btn" onclick="createAdminAccount()">Create Admin Account</button>
+            <div class="results" id="admin-results"></div>
+        </div>
+
+        <!-- Batch Creation -->
+        <div class="account-section">
+            <h3>⚡ Batch Create All Accounts</h3>
+            <p>Create all test accounts at once for complete system testing.</p>
+            <button class="btn btn-success" onclick="createAllAccounts()">🚀 Create All Test Accounts</button>
+            <button class="btn btn-danger" onclick="clearAllLogs()">🗑️ Clear Logs</button>
+            <div class="results" id="batch-results"></div>
+        </div>
+
+        <!-- Navigation -->
+        <div style="text-align: center; margin-top: 30px;">
+            <h4>Next Steps</h4>
+            <a href="/system-verification.html" class="btn">🔍 Run System Verification</a>
+            <a href="/login.html" class="btn">🔑 Test Login</a>
+            <a href="/dashboard.html" class="btn">📊 Go to Dashboard</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import {
+            getAuth,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            signOut
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import {
+            getFirestore,
+            doc,
+            setDoc,
+            getDoc
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC_7Q3zFCAU-NpZ24UKtz-DkkIwFHCgICU",
+            authDomain: "finaldestination-e3b5a.firebaseapp.com",
+            projectId: "finaldestination-e3b5a",
+            storageBucket: "finaldestination-e3b5a.firebasestorage.app",
+            messagingSenderId: "1004171999317",
+            appId: "1:1004171999317:web:f36c584200d2f85df23cdc",
+            measurementId: "G-EJVP6S98C8"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        function logResult(containerId, message, type = 'info') {
+            const container = document.getElementById(containerId);
+            const logClass = type === 'success' ? 'log-success' : 
+                           type === 'error' ? 'log-error' : 'log-info';
+            container.innerHTML += `<div class="${logClass}">${new Date().toLocaleTimeString()}: ${message}</div>`;
+            container.scrollTop = container.scrollHeight;
+        }
+
+        async function createAccountWithRole(email, password, role, resultContainerId) {
+            logResult(resultContainerId, `Creating ${role} account: ${email}`, 'info');
+            
+            try {
+                // Check if user already exists by trying to sign in first
+                try {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    logResult(resultContainerId, `✓ Account already exists and login works`, 'success');
+                    await signOut(auth);
+                    return true;
+                } catch (signInError) {
+                    // Account doesn't exist or wrong password, continue with creation
+                    logResult(resultContainerId, `Account doesn't exist, creating new account...`, 'info');
+                }
+
+                // Create new user account
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                logResult(resultContainerId, `✓ Firebase Auth account created`, 'success');
+
+                // Create user document in Firestore
+                const userData = {
+                    uid: userCredential.user.uid,
+                    email: email,
+                    role: role,
+                    createdAt: new Date(),
+                    lastLogin: new Date(),
+                    isActive: true,
+                    profile: {
+                        firstName: role.charAt(0).toUpperCase() + role.slice(1),
+                        lastName: 'User',
+                        phone: `+1-555-000${role === 'seller' ? '2' : role === 'buyer' ? '1' : '3'}`,
+                        address: `123 ${role.charAt(0).toUpperCase() + role.slice(1)} Street, City, State 12345`
+                    }
+                };
+
+                // Add role-specific data
+                if (role === 'seller') {
+                    userData.businessInfo = {
+                        businessName: 'Test Seller Business',
+                        businessType: 'General Merchandise',
+                        description: 'Test seller account for marketplace demonstrations'
+                    };
+                    userData.stats = {
+                        totalListings: 0,
+                        activeListing: 0,
+                        totalSales: 0,
+                        totalRevenue: 0,
+                        averageRating: 0,
+                        totalReviews: 0
+                    };
+                } else if (role === 'buyer') {
+                    userData.preferences = {
+                        categories: ['electronics', 'clothing', 'books'],
+                        maxBudget: 1000,
+                        notifications: true
+                    };
+                    userData.stats = {
+                        totalPurchases: 0,
+                        totalSpent: 0,
+                        averageRating: 0
+                    };
+                }
+
+                await setDoc(doc(db, 'users', userCredential.user.uid), userData);
+                logResult(resultContainerId, `✓ User document created in Firestore`, 'success');
+
+                // Sign out the user
+                await signOut(auth);
+                logResult(resultContainerId, `✓ ${role.charAt(0).toUpperCase() + role.slice(1)} account ready for testing`, 'success');
+
+                return true;
+
+            } catch (error) {
+                logResult(resultContainerId, `✗ Error: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        window.createSellerAccount = async function() {
+            await createAccountWithRole('seller@example.com', 'seller123', 'seller', 'seller-results');
+        };
+
+        window.createBuyerAccount = async function() {
+            await createAccountWithRole('buyer@example.com', 'buyer123', 'buyer', 'buyer-results');
+        };
+
+        window.createAdminAccount = async function() {
+            await createAccountWithRole('admin@example.com', 'admin123', 'admin', 'admin-results');
+        };
+
+        window.createAllAccounts = async function() {
+            logResult('batch-results', '🚀 Starting batch account creation...', 'info');
+            
+            const accounts = [
+                { email: 'seller@example.com', password: 'seller123', role: 'seller' },
+                { email: 'buyer@example.com', password: 'buyer123', role: 'buyer' },
+                { email: 'admin@example.com', password: 'admin123', role: 'admin' }
+            ];
+
+            let successCount = 0;
+            for (const account of accounts) {
+                const success = await createAccountWithRole(
+                    account.email, 
+                    account.password, 
+                    account.role, 
+                    'batch-results'
+                );
+                if (success) successCount++;
+                
+                // Wait a bit between creations
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+
+            logResult('batch-results', `✅ Batch creation complete: ${successCount}/${accounts.length} accounts ready`, 'success');
+            
+            if (successCount === accounts.length) {
+                logResult('batch-results', '🎯 All test accounts created successfully!', 'success');
+                logResult('batch-results', '💡 Next: Run system verification to test everything', 'info');
+            }
+        };
+
+        window.clearAllLogs = function() {
+            const resultContainers = ['seller-results', 'buyer-results', 'admin-results', 'batch-results'];
+            resultContainers.forEach(id => {
+                document.getElementById(id).innerHTML = '';
+            });
+        };
+
+        // Auto-check existing accounts on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            logResult('batch-results', '🔍 Checking for existing test accounts...', 'info');
+            
+            const testAccounts = [
+                { email: 'seller@example.com', password: 'seller123', role: 'seller' },
+                { email: 'buyer@example.com', password: 'buyer123', role: 'buyer' },
+                { email: 'admin@example.com', password: 'admin123', role: 'admin' }
+            ];
+
+            for (const account of testAccounts) {
+                try {
+                    await signInWithEmailAndPassword(auth, account.email, account.password);
+                    logResult('batch-results', `✓ ${account.role}@example.com account exists and working`, 'success');
+                    await signOut(auth);
+                } catch (error) {
+                    logResult('batch-results', `⚠ ${account.role}@example.com needs to be created`, 'info');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

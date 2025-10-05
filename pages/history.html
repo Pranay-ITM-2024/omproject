@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase History - P2P Marketplace</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+        <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-store"></i>
+                <span>P2P Marketplace</span>
+            </div>
+            <div class="nav-menu" id="nav-menu">
+                <a href="../index.html" class="nav-link">Home</a>
+                <a href="../dashboard.html" class="nav-link">Dashboard</a>
+                <a href="browse.html" class="nav-link">Browse</a>
+                <a href="seller.html" class="nav-link nav-seller-only">Sell</a>
+                <a href="analytics.html" class="nav-link nav-seller-only">Analytics</a>
+                <a href="my-listings.html" class="nav-link nav-seller-only">My Listings</a>
+                <a href="matching.html" class="nav-link">Smart Match</a>
+                <a href="history.html" class="nav-link nav-buyer-only active">History</a>
+                <a href="support.html" class="nav-link">Support</a>
+                <a href="admin.html" class="nav-link nav-admin-only">Admin</a>
+                <div class="nav-user" id="nav-user">
+                    <span id="user-email"></span>
+                    <button class="btn btn-outline" id="logout-btn">Logout</button>
+                </div>
+                <button class="theme-toggle" id="theme-toggle">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </button>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="history-container">
+        <div class="container">
+            <div class="history-header">
+                <h1>Purchase History</h1>
+                <p>Track your purchase requests and matching history</p>
+            </div>
+
+            <!-- History Content -->
+            <div class="history-content">
+                <!-- Purchase Requests -->
+                <div class="history-section">
+                    <h2>Your Purchase Requests</h2>
+                    <div id="requests-loading" class="loading" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Loading your purchase requests...
+                    </div>
+                    <div id="purchase-requests" class="requests-grid">
+                        <!-- Purchase requests will be loaded here -->
+                    </div>
+                    <div id="no-requests" class="no-content" style="display: none;">
+                        <i class="fas fa-search"></i>
+                        <h3>No purchase requests found</h3>
+                        <p>You haven't created any purchase requests yet.</p>
+                        <a href="matching.html" class="btn btn-primary">Create Your First Request</a>
+                    </div>
+                </div>
+
+                <!-- Matches History -->
+                <div class="history-section">
+                    <h2>Your Matches</h2>
+                    <div id="matches-loading" class="loading" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Loading your matches...
+                    </div>
+                    <div id="matches-history" class="matches-grid">
+                        <!-- Matches will be loaded here -->
+                    </div>
+                    <div id="no-matches" class="no-content" style="display: none;">
+                        <i class="fas fa-handshake"></i>
+                        <h3>No matches found</h3>
+                        <p>No matches have been found for your requests yet.</p>
+                        <a href="matching.html" class="btn btn-primary">Create a New Request</a>
+                    </div>
+                </div>
+
+                <!-- Favorite Products -->
+                <div class="history-section">
+                    <h2>Saved Products</h2>
+                    <div id="saved-products" class="products-grid">
+                        <div class="no-content">
+                            <i class="fas fa-heart"></i>
+                            <h3>No saved products</h3>
+                            <p>Products you save will appear here.</p>
+                            <a href="browse.html" class="btn btn-primary">Browse Products</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="../js/firebase.js"></script>
+    <script type="module" src="../js/app.js"></script>
+    <script src="../js/theme.js"></script>
+    
+    <script type="module">
+        import {
+            getCurrentUser,
+            requireAuth,
+            db,
+            collection,
+            getDocs,
+            query,
+            where,
+            formatDate,
+            formatCurrency,
+            showNotification
+        } from '../js/firebase.js';
+
+        document.addEventListener('DOMContentLoaded', function () {
+            setTimeout(() => {
+                if (requireAuth()) {
+                    initializeHistoryPage();
+                }
+            }, 1500);
+        });
+
+        async function initializeHistoryPage() {
+            await Promise.all([
+                loadPurchaseRequests(),
+                loadMatches()
+            ]);
+        }
+
+        async function loadPurchaseRequests() {
+            const loadingSpinner = document.getElementById('requests-loading');
+            const requestsGrid = document.getElementById('purchase-requests');
+            const noRequests = document.getElementById('no-requests');
+
+            try {
+                loadingSpinner.style.display = 'block';
+                requestsGrid.style.display = 'none';
+                noRequests.style.display = 'none';
+
+                const user = getCurrentUser();
+                if (!user) return;
+
+                // Use simple where query without orderBy to avoid composite index requirement
+                const requestsQuery = query(
+                    collection(db, 'purchaseRequests'),
+                    where('buyerId', '==', user.uid)
+                );
+
+                const snapshot = await getDocs(requestsQuery);
+                const requests = [];
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    requests.push({
+                        id: doc.id,
+                        ...data,
+                        createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt)
+                    });
+                });
+
+                // Sort in JavaScript after fetching
+                requests.sort((a, b) => b.createdAt - a.createdAt);
+
+                if (requests.length === 0) {
+                    requestsGrid.style.display = 'none';
+                    noRequests.style.display = 'block';
+                    return;
+                }
+
+                noRequests.style.display = 'none';
+                requestsGrid.style.display = 'grid';
+
+                const requestsHTML = requests.map(request => createRequestCard(request)).join('');
+                requestsGrid.innerHTML = requestsHTML;
+
+            } catch (error) {
+                console.error('Error loading purchase requests:', error);
+                // Show user-friendly message instead of technical error
+                requestsGrid.style.display = 'none';
+                noRequests.style.display = 'block';
+                showNotification('Unable to load purchase history. Please try again.', 'error');
+            } finally {
+                loadingSpinner.style.display = 'none';
+            }
+        }
+
+        function createRequestCard(request) {
+            const statusClass = request.status || 'active';
+            return `
+                <div class="request-card status-${statusClass}">
+                    <div class="request-header">
+                        <h3>Looking for ${request.desiredCategory}</h3>
+                        <span class="status-badge status-${statusClass}">${statusClass}</span>
+                    </div>
+                    <div class="request-details">
+                        <p><strong>Budget:</strong> Up to ${formatCurrency(request.maxBudget)}</p>
+                        <p><strong>Keywords:</strong> ${request.keywords}</p>
+                        <p><strong>Condition:</strong> ${request.preferredCondition}</p>
+                        <p><strong>Location:</strong> ${request.locationPreference}</p>
+                    </div>
+                    <div class="request-footer">
+                        <small>Created: ${formatDate(request.createdAt)}</small>
+                        <div class="request-actions">
+                            <button class="btn btn-sm btn-primary" onclick="findMatches('${request.id}')">
+                                <i class="fas fa-search"></i> Find Matches
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function loadMatches() {
+            const loadingSpinner = document.getElementById('matches-loading');
+            const matchesGrid = document.getElementById('matches-history');
+            const noMatches = document.getElementById('no-matches');
+
+            try {
+                loadingSpinner.style.display = 'block';
+                matchesGrid.style.display = 'none';
+                noMatches.style.display = 'none';
+
+                const user = getCurrentUser();
+                if (!user) return;
+
+                // Use simple where query without orderBy to avoid composite index requirement
+                const matchesQuery = query(
+                    collection(db, 'matches'),
+                    where('buyerId', '==', user.uid)
+                );
+
+                const snapshot = await getDocs(matchesQuery);
+                const matches = [];
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    matches.push({
+                        id: doc.id,
+                        ...data,
+                        createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt)
+                    });
+                });
+
+                // Sort in JavaScript after fetching
+                matches.sort((a, b) => b.createdAt - a.createdAt);
+
+                if (matches.length === 0) {
+                    matchesGrid.style.display = 'none';
+                    noMatches.style.display = 'block';
+                    return;
+                }
+
+                noMatches.style.display = 'none';
+                matchesGrid.style.display = 'grid';
+
+                const matchesHTML = matches.map(match => createMatchCard(match)).join('');
+                matchesGrid.innerHTML = matchesHTML;
+
+            } catch (error) {
+                console.error('Error loading matches:', error);
+                // Show user-friendly message instead of technical error
+                matchesGrid.style.display = 'none';
+                noMatches.style.display = 'block';
+                showNotification('Unable to load match history. Please try again.', 'error');
+            } finally {
+                loadingSpinner.style.display = 'none';
+            }
+        }
+
+        function createMatchCard(match) {
+            return `
+                <div class="match-card">
+                    <div class="match-header">
+                        <h3>${match.listingTitle}</h3>
+                        <span class="match-score">Match: ${match.matchScore}%</span>
+                    </div>
+                    <div class="match-details">
+                        <p><strong>Price:</strong> ${formatCurrency(match.listingPrice)}</p>
+                        <p><strong>Seller:</strong> ${match.sellerName || 'Anonymous'}</p>
+                        <p><strong>Category:</strong> ${match.listingCategory}</p>
+                    </div>
+                    <div class="match-footer">
+                        <small>Matched: ${formatDate(match.createdAt)}</small>
+                        <div class="match-actions">
+                            <button class="btn btn-sm btn-primary" onclick="contactSeller('${match.sellerId}')">
+                                <i class="fas fa-envelope"></i> Contact Seller
+                            </button>
+                            <button class="btn btn-sm btn-outline" onclick="viewListing('${match.listingId}')">
+                                <i class="fas fa-eye"></i> View Listing
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.findMatches = function(requestId) {
+            window.location.href = `matching.html?requestId=${requestId}`;
+        };
+
+        window.contactSeller = function(sellerId) {
+            showNotification('Contact seller functionality will be implemented in the next phase', 'info');
+        };
+
+        window.viewListing = function(listingId) {
+            window.location.href = `browse.html?listing=${listingId}`;
+        };
+    </script>
+</body>
+
+</html>
