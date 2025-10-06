@@ -19,14 +19,22 @@ import {
 
 // Initialize support page when DOM is loaded
 document.addEventListener('DOMContentLoaded', function () {
-    if (requireAuth()) {
-        initializeSupportPage();
-    }
+    initializeSupportPage();
 });
 
 let userTickets = [];
 
 async function initializeSupportPage() {
+    console.log('Initializing support page...');
+    
+    // Wait for auth to settle before checking
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Check authentication
+    if (!requireAuth()) {
+        return;
+    }
+
     // Load user's tickets
     await loadUserTickets();
 
@@ -48,32 +56,90 @@ async function loadUserTickets() {
         noTickets.style.display = 'none';
 
         const user = getCurrentUser();
-        if (!user) return;
+        if (!user) {
+            console.log('No authenticated user found');
+            return;
+        }
 
-        // Query user's tickets
-        const ticketsQuery = query(
-            collection(db, 'tickets'),
-            where('userId', '==', user.uid),
-            orderBy('createdAt', 'desc')
-        );
+        // Check if db is available
+        if (!db) {
+            console.error('Database not initialized');
+            throw new Error('Database not available');
+        }
 
-        const snapshot = await getDocs(ticketsQuery);
-        userTickets = [];
+        // Query user's tickets with better error handling
+        try {
+            // First try the simple query without ordering to avoid index requirement
+            let ticketsQuery;
+            try {
+                // Try with ordering first (requires index)
+                ticketsQuery = query(
+                    collection(db, 'tickets'),
+                    where('userId', '==', user.uid),
+                    orderBy('createdAt', 'desc')
+                );
+                
+                const snapshot = await getDocs(ticketsQuery);
+                userTickets = [];
 
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            userTickets.push({
-                id: doc.id,
-                ...data,
-                createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt)
-            });
-        });
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    userTickets.push({
+                        id: doc.id,
+                        ...data,
+                        createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt)
+                    });
+                });
+            } catch (indexError) {
+                if (indexError.code === 'failed-precondition') {
+                    console.log('Index not available, falling back to simple query...');
+                    // Fallback to simple query without ordering
+                    ticketsQuery = query(
+                        collection(db, 'tickets'),
+                        where('userId', '==', user.uid)
+                    );
+                    
+                    const snapshot = await getDocs(ticketsQuery);
+                    userTickets = [];
 
-        displayUserTickets(userTickets);
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        userTickets.push({
+                            id: doc.id,
+                            ...data,
+                            createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt)
+                        });
+                    });
+                    
+                    // Sort manually on client side
+                    userTickets.sort((a, b) => b.createdAt - a.createdAt);
+                } else {
+                    throw indexError;
+                }
+            }
+
+            displayUserTickets(userTickets);
+        } catch (queryError) {
+            console.error('Firestore query error:', queryError);
+            // If it's a permission error, show a more specific message
+            if (queryError.code === 'permission-denied') {
+                console.log('Permission denied - showing empty state');
+                userTickets = [];
+                displayUserTickets(userTickets);
+                return;
+            }
+            throw queryError;
+        }
 
     } catch (error) {
         console.error('Error loading tickets:', error);
-        showNotification('Error loading your tickets. Please try again.', 'error');
+        // Don't show error notification for permission errors, just show empty state
+        if (error.code !== 'permission-denied') {
+            showNotification('Unable to load tickets at the moment. Please try again later.', 'warning');
+        }
+        // Show empty state
+        userTickets = [];
+        displayUserTickets(userTickets);
     } finally {
         ticketsLoading.style.display = 'none';
         ticketsList.style.display = 'block';
@@ -365,33 +431,47 @@ async function closeTicket(ticketId) {
 }
 
 function initializeFAQ() {
+    console.log('Initializing FAQ functionality...');
     const faqItems = document.querySelectorAll('.faq-item');
+    console.log('Found', faqItems.length, 'FAQ items');
 
-    faqItems.forEach(item => {
+    faqItems.forEach((item, index) => {
         const question = item.querySelector('.faq-question');
         const answer = item.querySelector('.faq-answer');
+        
+        if (!question || !answer) {
+            console.warn(`FAQ item ${index} missing question or answer element`);
+            return;
+        }
 
         question.addEventListener('click', () => {
+            console.log('FAQ item clicked:', index);
             const isOpen = answer.style.display === 'block';
 
             // Close all other FAQ items
             faqItems.forEach(otherItem => {
                 if (otherItem !== item) {
-                    otherItem.querySelector('.faq-answer').style.display = 'none';
-                    otherItem.querySelector('.faq-question i').style.transform = 'rotate(0deg)';
+                    const otherAnswer = otherItem.querySelector('.faq-answer');
+                    const otherIcon = otherItem.querySelector('.faq-question i');
+                    if (otherAnswer) otherAnswer.style.display = 'none';
+                    if (otherIcon) otherIcon.style.transform = 'rotate(0deg)';
                 }
             });
 
             // Toggle current item
             if (isOpen) {
                 answer.style.display = 'none';
-                question.querySelector('i').style.transform = 'rotate(0deg)';
+                const icon = question.querySelector('i');
+                if (icon) icon.style.transform = 'rotate(0deg)';
             } else {
                 answer.style.display = 'block';
-                question.querySelector('i').style.transform = 'rotate(180deg)';
+                const icon = question.querySelector('i');
+                if (icon) icon.style.transform = 'rotate(180deg)';
             }
         });
     });
+    
+    console.log('FAQ initialization complete');
 }
 
 // Utility function for text truncation

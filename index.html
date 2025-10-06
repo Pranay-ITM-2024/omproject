@@ -203,51 +203,6 @@
             if (savedTheme === 'dark') {
                 document.body.classList.add('theme-dark');
             }
-            
-            // Set up theme toggle when DOM is ready
-            document.addEventListener('DOMContentLoaded', function() {
-                console.log('Setting up inline theme toggle...');
-                const themeToggle = document.getElementById('theme-toggle');
-                const themeIcon = document.getElementById('theme-icon');
-                
-                if (themeToggle) {
-                    console.log('Found theme toggle, adding listener');
-                    
-                    // Update icon based on current theme
-                    if (savedTheme === 'dark' && themeIcon) {
-                        themeIcon.className = 'fas fa-sun';
-                    }
-                    
-                    themeToggle.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        console.log('Theme toggle clicked!');
-                        
-                        const currentTheme = document.documentElement.getAttribute('data-theme');
-                        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                        
-                        console.log('Switching from', currentTheme, 'to', newTheme);
-                        
-                        // Apply new theme
-                        document.documentElement.setAttribute('data-theme', newTheme);
-                        document.body.className = document.body.className.replace('theme-dark', '');
-                        if (newTheme === 'dark') {
-                            document.body.classList.add('theme-dark');
-                        }
-                        
-                        // Update icon
-                        if (themeIcon) {
-                            themeIcon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-                        }
-                        
-                        // Save preference
-                        localStorage.setItem('marketplace-theme', newTheme);
-                        
-                        console.log('Theme changed to:', newTheme);
-                    });
-                } else {
-                    console.log('Theme toggle button not found!');
-                }
-            });
         })();
     </script>
     <script src="js/theme.js"></script>

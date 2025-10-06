@@ -19,11 +19,11 @@
             <div class="nav-menu" id="nav-menu">
                 <a href="../index.html" class="nav-link">Home</a>
                 <a href="../dashboard.html" class="nav-link">Dashboard</a>
-                <a href="browse.html" class="nav-link">Browse</a>
+                <a href="browse.html" class="nav-link nav-buyer-only">Browse</a>
                 <a href="seller.html" class="nav-link nav-seller-only">Sell</a>
                 <a href="analytics.html" class="nav-link nav-seller-only active">Analytics</a>
                 <a href="my-listings.html" class="nav-link nav-seller-only">My Listings</a>
-                <a href="matching.html" class="nav-link">Smart Match</a>
+                <a href="matching.html" class="nav-link nav-buyer-only">Smart Match</a>
                 <a href="history.html" class="nav-link nav-buyer-only">History</a>
                 <a href="support.html" class="nav-link">Support</a>
                 <a href="admin.html" class="nav-link nav-admin-only">Admin</a>
@@ -31,6 +31,9 @@
                     <span id="user-email"></span>
                     <button class="btn btn-outline" id="logout-btn">Logout</button>
                 </div>
+                <button class="theme-toggle" id="theme-toggle">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </button>
             </div>
             <div class="hamburger" id="hamburger">
                 <span></span>
@@ -193,22 +196,53 @@
             const container = document.getElementById('top-products');
             
             try {
-                const listingsQuery = query(
-                    collection(db, 'listings'),
-                    where('sellerId', '==', sellerId),
-                    orderBy('views', 'desc')
-                );
-                const snapshot = await getDocs(listingsQuery);
+                // Try the optimized query first, fall back to simple query if index doesn't exist
+                let listingsQuery;
+                let snapshot;
+                
+                try {
+                    // Optimized query with composite index
+                    listingsQuery = query(
+                        collection(db, 'listings'),
+                        where('sellerId', '==', sellerId),
+                        orderBy('views', 'desc')
+                    );
+                    snapshot = await getDocs(listingsQuery);
+                } catch (error) {
+                    console.log('Composite index not available for views sorting, using fallback query:', error.message);
+                    
+                    // Fallback: Simple query without orderBy
+                    listingsQuery = query(
+                        collection(db, 'listings'),
+                        where('sellerId', '==', sellerId)
+                    );
+                    snapshot = await getDocs(listingsQuery);
+                }
                 
                 if (snapshot.empty) {
                     container.innerHTML = '<p>No products found. <a href="seller.html">Add your first product</a></p>';
                     return;
                 }
 
+                // Convert to array and sort client-side if needed
+                let products = [];
+                snapshot.forEach((doc) => {
+                    products.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+
+                // Sort by views descending (client-side sorting for fallback)
+                products.sort((a, b) => {
+                    const viewsA = a.views || 0;
+                    const viewsB = b.views || 0;
+                    return viewsB - viewsA;
+                });
+
                 let html = '';
-                snapshot.forEach((doc, index) => {
+                products.forEach((data, index) => {
                     if (index < 5) { // Top 5
-                        const data = doc.data();
                         html += `
                             <div class="product-item">
                                 <div class="product-rank">#${index + 1}</div>
@@ -233,22 +267,53 @@
             const container = document.getElementById('recent-activity');
             
             try {
-                const listingsQuery = query(
-                    collection(db, 'listings'),
-                    where('sellerId', '==', sellerId),
-                    orderBy('createdAt', 'desc')
-                );
-                const snapshot = await getDocs(listingsQuery);
+                // Try the optimized query first, fall back to simple query if index doesn't exist
+                let listingsQuery;
+                let snapshot;
+                
+                try {
+                    // Optimized query with composite index
+                    listingsQuery = query(
+                        collection(db, 'listings'),
+                        where('sellerId', '==', sellerId),
+                        orderBy('createdAt', 'desc')
+                    );
+                    snapshot = await getDocs(listingsQuery);
+                } catch (error) {
+                    console.log('Composite index not available for createdAt sorting, using fallback query:', error.message);
+                    
+                    // Fallback: Simple query without orderBy
+                    listingsQuery = query(
+                        collection(db, 'listings'),
+                        where('sellerId', '==', sellerId)
+                    );
+                    snapshot = await getDocs(listingsQuery);
+                }
                 
                 if (snapshot.empty) {
                     container.innerHTML = '<p>No recent activity</p>';
                     return;
                 }
 
+                // Convert to array and sort client-side if needed
+                let activities = [];
+                snapshot.forEach((doc) => {
+                    activities.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+
+                // Sort by createdAt descending (client-side sorting for fallback)
+                activities.sort((a, b) => {
+                    const dateA = a.createdAt?.toDate?.() || new Date(a.createdAt) || new Date(0);
+                    const dateB = b.createdAt?.toDate?.() || new Date(b.createdAt) || new Date(0);
+                    return dateB - dateA;
+                });
+
                 let html = '';
-                snapshot.forEach((doc, index) => {
+                activities.forEach((data, index) => {
                     if (index < 10) { // Recent 10
-                        const data = doc.data();
                         html += `
                             <div class="activity-item">
                                 <i class="fas fa-plus-circle"></i>
@@ -269,6 +334,7 @@
             }
         }
     </script>
+    <script src="../js/theme.js"></script>
 </body>
 
 </html>

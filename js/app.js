@@ -11,22 +11,27 @@ import {
 } from './firebase.js';
 
 // Initialize the app
-document.addEventListener('DOMContentLoaded', function () {
-    console.log('DOM loaded, initializing app...'); // Debug log
-    initializeTheme();
-    initializeAuth();
-    initializeMobileMenu();
-    setupThemeToggle();
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 P2P Marketplace App Starting...');
     
-    // Debug: Add manual test function to window
-    window.testTheme = function() {
-        console.log('Manual theme test triggered');
-        const current = document.documentElement.getAttribute('data-theme');
-        console.log('Current theme:', current);
-        toggleTheme();
-    };
-    
-    console.log('App initialization complete'); // Debug log
+    try {
+        // Initialize core app features
+        initializeApp();
+        
+        // Test function for manual theme testing
+        window.testTheme = function() {
+            console.log('Manual theme test triggered');
+            const current = document.documentElement.getAttribute('data-theme');
+            console.log('Current theme:', current);
+            if (window.toggleTheme) {
+                window.toggleTheme();
+            }
+        };
+        
+        console.log('✅ App initialization complete');
+    } catch (error) {
+        console.error('❌ Error initializing app:', error);
+    }
 });
 
 function initializeApp() {
@@ -178,75 +183,6 @@ function initializeMobileMenu() {
             }
         });
     }
-}
-
-// Theme System - Simplified and Robust
-let currentTheme = 'light';
-
-function initializeTheme() {
-    // Get saved theme or default to light
-    currentTheme = localStorage.getItem('marketplace-theme') || 'light';
-    console.log('Initializing theme:', currentTheme);
-    applyTheme(currentTheme);
-}
-
-function setupThemeToggle() {
-    console.log('Setting up theme toggle...');
-    
-    // Use event delegation to handle theme toggle
-    document.addEventListener('click', function(e) {
-        if (e.target.closest('#theme-toggle')) {
-            console.log('Theme toggle clicked!');
-            toggleTheme();
-        }
-    });
-    
-    // Also try direct binding
-    const themeToggle = document.getElementById('theme-toggle');
-    if (themeToggle) {
-        console.log('Found theme toggle button, adding direct listener');
-        themeToggle.addEventListener('click', toggleTheme);
-    } else {
-        console.log('Theme toggle button not found, using delegation only');
-    }
-}
-
-function toggleTheme() {
-    console.log('Toggle theme called, current:', currentTheme);
-    currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    console.log('Switching to:', currentTheme);
-    applyTheme(currentTheme);
-    localStorage.setItem('marketplace-theme', currentTheme);
-}
-
-function applyTheme(theme) {
-    console.log('Applying theme:', theme);
-    
-    // Set data attribute on html element
-    document.documentElement.setAttribute('data-theme', theme);
-    
-    // Also set a class on body for additional styling if needed
-    document.body.className = document.body.className.replace(/theme-\w+/g, '');
-    document.body.classList.add(`theme-${theme}`);
-    
-    // Update all theme icons on the page
-    const themeIcons = document.querySelectorAll('#theme-icon, .theme-icon');
-    themeIcons.forEach(icon => {
-        if (theme === 'dark') {
-            icon.className = 'fas fa-sun';
-        } else {
-            icon.className = 'fas fa-moon';
-        }
-    });
-    
-    // Force style recalculation
-    document.body.style.transition = 'all 0.3s ease';
-    setTimeout(() => {
-        document.body.style.transition = '';
-    }, 300);
-    
-    console.log('Theme applied. HTML data-theme:', document.documentElement.getAttribute('data-theme'));
-    console.log('Body classes:', document.body.className);
 }
 
 function getCurrentPage() {

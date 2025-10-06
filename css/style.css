@@ -312,6 +312,60 @@ html.theme-dark .btn-secondary {
     border-color: var(--border-color) !important;
 }
 
+/* Dark mode for outline buttons */
+html[data-theme="dark"] .btn-outline,
+.theme-dark .btn-outline,
+html.theme-dark .btn-outline {
+    background: transparent !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+html[data-theme="dark"] .btn-outline:hover,
+.theme-dark .btn-outline:hover,
+html.theme-dark .btn-outline:hover {
+    background: var(--bg-tertiary) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--primary-color) !important;
+}
+
+/* Dark mode for ticket status and priority badges */
+html[data-theme="dark"] .ticket-status,
+.theme-dark .ticket-status,
+html.theme-dark .ticket-status {
+    color: white !important;
+    font-weight: 600 !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
+}
+
+html[data-theme="dark"] .ticket-priority,
+.theme-dark .ticket-priority,
+html.theme-dark .ticket-priority {
+    color: white !important;
+    font-weight: 600 !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
+}
+
+/* Enhanced button styling for tickets */
+.ticket-actions .btn {
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 11px;
+}
+
+.ticket-actions .btn i {
+    margin-right: 5px;
+}
+
+/* Better button focus states */
+html[data-theme="dark"] .btn:focus,
+.theme-dark .btn:focus,
+html.theme-dark .btn:focus {
+    outline: 2px solid var(--primary-color) !important;
+    outline-offset: 2px !important;
+}
+
 /* Dark mode for forms */
 html[data-theme="dark"] input,
 html[data-theme="dark"] select,
@@ -708,6 +762,138 @@ html.theme-dark .modal-header h2 {
     color: var(--text-primary) !important;
 }
 
+/* Dark mode for ticket modal content */
+html[data-theme="dark"] .ticket-modal-content,
+.theme-dark .ticket-modal-content,
+html.theme-dark .ticket-modal-content {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .ticket-modal-header,
+.theme-dark .ticket-modal-header,
+html.theme-dark .ticket-modal-header {
+    border-bottom-color: var(--border-color) !important;
+}
+
+html[data-theme="dark"] .ticket-modal-header h2,
+.theme-dark .ticket-modal-header h2,
+html.theme-dark .ticket-modal-header h2 {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .ticket-info p,
+.theme-dark .ticket-info p,
+html.theme-dark .ticket-info p {
+    color: var(--text-secondary) !important;
+}
+
+html[data-theme="dark"] .ticket-info strong,
+.theme-dark .ticket-info strong,
+html.theme-dark .ticket-info strong {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .ticket-modal-body,
+.theme-dark .ticket-modal-body,
+html.theme-dark .ticket-modal-body {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .ticket-modal-body h3,
+.theme-dark .ticket-modal-body h3,
+html.theme-dark .ticket-modal-body h3 {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .ticket-modal-body p,
+.theme-dark .ticket-modal-body p,
+html.theme-dark .ticket-modal-body p {
+    color: var(--text-secondary) !important;
+}
+
+html[data-theme="dark"] .ticket-pending,
+.theme-dark .ticket-pending,
+html.theme-dark .ticket-pending {
+    color: var(--text-secondary) !important;
+}
+
+html[data-theme="dark"] .ticket-pending h3,
+.theme-dark .ticket-pending h3,
+html.theme-dark .ticket-pending h3 {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .ticket-pending i,
+.theme-dark .ticket-pending i,
+html.theme-dark .ticket-pending i {
+    color: var(--primary-color) !important;
+}
+
+html[data-theme="dark"] .ticket-modal-actions,
+.theme-dark .ticket-modal-actions,
+html.theme-dark .ticket-modal-actions {
+    border-top-color: var(--border-color) !important;
+}
+
+html[data-theme="dark"] .response-content small,
+.theme-dark .response-content small,
+html.theme-dark .response-content small {
+    color: var(--text-tertiary) !important;
+}
+
+/* Modal body and actions styling improvements */
+html[data-theme="dark"] .modal-body,
+.theme-dark .modal-body,
+html.theme-dark .modal-body {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .modal-actions,
+.theme-dark .modal-actions,
+html.theme-dark .modal-actions {
+    border-top-color: var(--border-color) !important;
+}
+
+/* Additional dark mode styles for enhanced ticket modal elements */
+html[data-theme="dark"] .ticket-response,
+.theme-dark .ticket-response,
+html.theme-dark .ticket-response {
+    background: var(--bg-tertiary) !important;
+    border-left-color: var(--primary-color) !important;
+}
+
+html[data-theme="dark"] .ticket-response h3,
+.theme-dark .ticket-response h3,
+html.theme-dark .ticket-response h3 {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .ticket-response p,
+.theme-dark .ticket-response p,
+html.theme-dark .ticket-response p {
+    color: var(--text-secondary) !important;
+}
+
+/* Dark mode for enhanced ticket info */
+html[data-theme="dark"] .ticket-info h2,
+.theme-dark .ticket-info h2,
+html.theme-dark .ticket-info h2 {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .ticket-meta p,
+.theme-dark .ticket-meta p,
+html.theme-dark .ticket-meta p {
+    color: var(--text-secondary) !important;
+}
+
+html[data-theme="dark"] .ticket-meta strong,
+.theme-dark .ticket-meta strong,
+html.theme-dark .ticket-meta strong {
+    color: var(--text-primary) !important;
+}
+
 /* Dark mode for history items */
 html[data-theme="dark"] .history-item,
 .theme-dark .history-item,
@@ -799,6 +985,12 @@ html.theme-dark .ticket-card {
     border-color: var(--border-color) !important;
 }
 
+html[data-theme="dark"] .ticket-card:hover,
+.theme-dark .ticket-card:hover,
+html.theme-dark .ticket-card:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
 html[data-theme="dark"] .ticket-header,
 .theme-dark .ticket-header,
 html.theme-dark .ticket-header {
@@ -810,6 +1002,70 @@ html[data-theme="dark"] .ticket-id,
 .theme-dark .ticket-id,
 html.theme-dark .ticket-id {
     color: var(--text-primary) !important;
+}
+
+/* Dark mode styles for ticket content */
+html[data-theme="dark"] .ticket-subject,
+.theme-dark .ticket-subject,
+html.theme-dark .ticket-subject {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .ticket-description,
+.theme-dark .ticket-description,
+html.theme-dark .ticket-description {
+    color: var(--text-secondary) !important;
+}
+
+html[data-theme="dark"] .ticket-category,
+.theme-dark .ticket-category,
+html.theme-dark .ticket-category {
+    background: var(--bg-tertiary) !important;
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .ticket-date,
+.theme-dark .ticket-date,
+html.theme-dark .ticket-date {
+    color: var(--text-tertiary) !important;
+}
+
+html[data-theme="dark"] .ticket-response,
+.theme-dark .ticket-response,
+html.theme-dark .ticket-response {
+    background: var(--bg-tertiary) !important;
+    border-left-color: var(--primary-color) !important;
+}
+
+html[data-theme="dark"] .ticket-response h4,
+.theme-dark .ticket-response h4,
+html.theme-dark .ticket-response h4 {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .ticket-response p,
+.theme-dark .ticket-response p,
+html.theme-dark .ticket-response p {
+    color: var(--text-secondary) !important;
+}
+
+html[data-theme="dark"] .ticket-response small,
+.theme-dark .ticket-response small,
+html.theme-dark .ticket-response small {
+    color: var(--text-tertiary) !important;
+}
+
+html[data-theme="dark"] .ticket-actions,
+.theme-dark .ticket-actions,
+html.theme-dark .ticket-actions {
+    background: var(--bg-tertiary) !important;
+    border-top-color: var(--border-color) !important;
+}
+
+html[data-theme="dark"] .no-tickets,
+.theme-dark .no-tickets,
+html.theme-dark .no-tickets {
+    color: var(--text-secondary) !important;
 }
 
 /* Dark mode for auth pages */
@@ -2234,11 +2490,12 @@ html[data-theme="dark"] .theme-toggle:hover,
 }
 
 .listing-card {
-    background: white;
-    border: 1px solid #eee;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
     border-radius: 10px;
     overflow: hidden;
     transition: transform 0.3s ease;
+    color: var(--text-primary);
 }
 
 .listing-card:hover {
@@ -2249,11 +2506,11 @@ html[data-theme="dark"] .theme-toggle:hover,
 .listing-image {
     position: relative;
     height: 150px;
-    background: #f8f9fa;
+    background: var(--bg-secondary);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #666;
+    color: var(--text-secondary);
     font-size: 2rem;
 }
 
@@ -3168,6 +3425,12 @@ html[data-theme="dark"] .theme-toggle:hover,
     border-radius: 8px;
     margin-bottom: 15px;
     overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.faq-item:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .faq-question {
@@ -3177,7 +3440,9 @@ html[data-theme="dark"] .theme-toggle:hover,
     padding: 20px;
     background: #f8f9fa;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+    border: none;
+    outline: none;
 }
 
 .faq-question:hover {
@@ -3188,11 +3453,13 @@ html[data-theme="dark"] .theme-toggle:hover,
     color: #2c3e50;
     margin: 0;
     font-size: 1.1rem;
+    font-weight: 600;
 }
 
 .faq-question i {
     color: #3498db;
     transition: transform 0.3s ease;
+    font-size: 1.2rem;
 }
 
 .faq-answer {
@@ -3200,12 +3467,64 @@ html[data-theme="dark"] .theme-toggle:hover,
     padding: 20px;
     background: white;
     border-top: 1px solid #eee;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .faq-answer p {
     color: #666;
     line-height: 1.6;
     margin: 0;
+}
+
+/* Dark mode styles for FAQ */
+html[data-theme="dark"] .faq-item,
+.theme-dark .faq-item,
+html.theme-dark .faq-item {
+    border-color: var(--border-color) !important;
+    background: var(--bg-secondary) !important;
+}
+
+html[data-theme="dark"] .faq-question,
+.theme-dark .faq-question,
+html.theme-dark .faq-question {
+    background: var(--bg-tertiary) !important;
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .faq-question:hover,
+.theme-dark .faq-question:hover,
+html.theme-dark .faq-question:hover {
+    background: var(--bg-hover) !important;
+}
+
+html[data-theme="dark"] .faq-question h3,
+.theme-dark .faq-question h3,
+html.theme-dark .faq-question h3 {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .faq-question i,
+.theme-dark .faq-question i,
+html.theme-dark .faq-question i {
+    color: var(--primary-color) !important;
+}
+
+html[data-theme="dark"] .faq-answer,
+.theme-dark .faq-answer,
+html.theme-dark .faq-answer {
+    background: var(--bg-secondary) !important;
+    border-top-color: var(--border-color) !important;
+}
+
+html[data-theme="dark"] .faq-answer p,
+.theme-dark .faq-answer p,
+html.theme-dark .faq-answer p {
+    color: var(--text-secondary) !important;
 }
 
 /* Admin Page Styles */
@@ -3558,21 +3877,123 @@ html[data-theme="dark"] .theme-toggle:hover,
     border-bottom: 1px solid #eee;
 }
 
+/* Enhanced ticket modal styling */
+.ticket-modal-content {
+    padding: 20px;
+}
+
+.ticket-modal-body {
+    margin: 20px 0;
+}
+
+.ticket-modal-body h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.ticket-modal-body p {
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.ticket-pending {
+    text-align: center;
+    padding: 30px 20px;
+    color: #666;
+}
+
+.ticket-pending i {
+    font-size: 2rem;
+    color: #3498db;
+    margin-bottom: 15px;
+}
+
+.ticket-pending h3 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.ticket-response {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    border-left: 4px solid #3498db;
+}
+
+.ticket-response h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.response-content p {
+    margin-bottom: 10px;
+}
+
+.ticket-modal-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    padding: 20px;
+    border-top: 1px solid #eee;
+    margin-top: 20px;
+}
+
 .ticket-badges {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+    margin-top: 10px;
 }
 
 .ticket-info {
-    display: grid;
-    gap: 10px;
-    margin-bottom: 20px;
+    flex: 1;
 }
 
-.ticket-info p {
+.ticket-info h2 {
+    color: #2c3e50;
+    margin: 0 0 15px 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.ticket-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 200px;
+}
+
+.ticket-meta p {
     margin: 0;
     color: #666;
+    font-size: 14px;
+}
+
+.ticket-meta strong {
+    color: #2c3e50;
+}
+
+/* Responsive modal improvements */
+@media (max-width: 768px) {
+    .ticket-modal-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .ticket-meta {
+        min-width: auto;
+    }
+    
+    .ticket-modal-actions {
+        flex-direction: column;
+    }
+    
+    .ticket-modal-actions .btn {
+        width: 100%;
+    }
 }
 
 .ticket-response-form {
@@ -3836,11 +4257,12 @@ html[data-theme="dark"] .theme-toggle:hover,
 }
 
 .listing-card {
-    background: white;
-    border: 1px solid #eee;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
     border-radius: 10px;
     overflow: hidden;
     transition: transform 0.3s ease;
+    color: var(--text-primary);
 }
 
 .listing-card:hover {
@@ -4203,4 +4625,313 @@ html[data-theme="dark"] .theme-toggle:hover,
     .cta-buttons .btn {
         width: 200px;
     }
+}
+
+/* Dark mode styles for history page cards */
+html[data-theme="dark"] .request-card,
+.theme-dark .request-card,
+html.theme-dark .request-card {
+    background: var(--bg-secondary) !important;
+    border-color: var(--border-color) !important;
+}
+
+html[data-theme="dark"] .request-header,
+.theme-dark .request-header,
+html.theme-dark .request-header {
+    background: var(--bg-tertiary) !important;
+    border-bottom-color: var(--border-color) !important;
+}
+
+html[data-theme="dark"] .request-header h3,
+.theme-dark .request-header h3,
+html.theme-dark .request-header h3 {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .request-details p,
+.theme-dark .request-details p,
+html.theme-dark .request-details p {
+    color: var(--text-secondary) !important;
+}
+
+html[data-theme="dark"] .request-details strong,
+.theme-dark .request-details strong,
+html.theme-dark .request-details strong {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .request-footer,
+.theme-dark .request-footer,
+html.theme-dark .request-footer {
+    background: var(--bg-tertiary) !important;
+    border-top-color: var(--border-color) !important;
+}
+
+html[data-theme="dark"] .request-footer small,
+.theme-dark .request-footer small,
+html.theme-dark .request-footer small {
+    color: var(--text-tertiary) !important;
+}
+
+html[data-theme="dark"] .match-card,
+.theme-dark .match-card,
+html.theme-dark .match-card {
+    background: var(--bg-secondary) !important;
+    border-color: var(--border-color) !important;
+}
+
+html[data-theme="dark"] .match-header,
+.theme-dark .match-header,
+html.theme-dark .match-header {
+    background: var(--bg-tertiary) !important;
+    border-bottom-color: var(--border-color) !important;
+}
+
+html[data-theme="dark"] .match-header h3,
+.theme-dark .match-header h3,
+html.theme-dark .match-header h3 {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .match-details p,
+.theme-dark .match-details p,
+html.theme-dark .match-details p {
+    color: var(--text-secondary) !important;
+}
+
+html[data-theme="dark"] .match-details strong,
+.theme-dark .match-details strong,
+html.theme-dark .match-details strong {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .match-footer,
+.theme-dark .match-footer,
+html.theme-dark .match-footer {
+    background: var(--bg-tertiary) !important;
+    border-top-color: var(--border-color) !important;
+}
+
+html[data-theme="dark"] .match-footer small,
+.theme-dark .match-footer small,
+html.theme-dark .match-footer small {
+    color: var(--text-tertiary) !important;
+}
+
+html[data-theme="dark"] .no-content,
+.theme-dark .no-content,
+html.theme-dark .no-content {
+    color: var(--text-secondary) !important;
+}
+
+html[data-theme="dark"] .no-content h3,
+.theme-dark .no-content h3,
+html.theme-dark .no-content h3 {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .no-content i,
+.theme-dark .no-content i,
+html.theme-dark .no-content i {
+    color: var(--primary-color) !important;
+}
+
+/* Dark mode hover effects for history cards */
+html[data-theme="dark"] .request-card:hover,
+.theme-dark .request-card:hover,
+html.theme-dark .request-card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
+}
+
+html[data-theme="dark"] .match-card:hover,
+.theme-dark .match-card:hover,
+html.theme-dark .match-card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Ensure status badges remain visible */
+html[data-theme="dark"] .status-badge,
+.theme-dark .status-badge,
+html.theme-dark .status-badge {
+    color: white !important;
+    font-weight: 600 !important;
+}
+
+html[data-theme="dark"] .match-score,
+.theme-dark .match-score,
+html.theme-dark .match-score {
+    color: white !important;
+    font-weight: 600 !important;
+}
+
+/* Additional dark mode fixes for history page sections */
+html[data-theme="dark"] .history-section,
+.theme-dark .history-section,
+html.theme-dark .history-section {
+    background: var(--bg-secondary) !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+html[data-theme="dark"] .history-section h2,
+.theme-dark .history-section h2,
+html.theme-dark .history-section h2 {
+    background: var(--bg-tertiary) !important;
+    color: var(--text-primary) !important;
+    border-bottom-color: var(--border-color) !important;
+}
+
+html[data-theme="dark"] .history-content,
+.theme-dark .history-content,
+html.theme-dark .history-content {
+    background: var(--bg-primary) !important;
+}
+
+html[data-theme="dark"] .history-header,
+.theme-dark .history-header,
+html.theme-dark .history-header {
+    background: var(--bg-primary) !important;
+}
+
+html[data-theme="dark"] .history-header h1,
+.theme-dark .history-header h1,
+html.theme-dark .history-header h1 {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .history-header p,
+.theme-dark .history-header p,
+html.theme-dark .history-header p {
+    color: var(--text-secondary) !important;
+}
+
+/* Dark mode for loading states and other elements */
+html[data-theme="dark"] .loading,
+.theme-dark .loading,
+html.theme-dark .loading {
+    color: var(--text-secondary) !important;
+    background: var(--bg-secondary) !important;
+}
+
+html[data-theme="dark"] .history-container,
+.theme-dark .history-container,
+html.theme-dark .history-container {
+    background: var(--bg-primary) !important;
+}
+
+/* Force override any remaining white backgrounds */
+html[data-theme="dark"] .history-content > *,
+.theme-dark .history-content > *,
+html.theme-dark .history-content > * {
+    background: var(--bg-primary) !important;
+}
+
+html[data-theme="dark"] .container,
+.theme-dark .container,
+html.theme-dark .container {
+    background: transparent !important;
+}
+
+/* Ensure grid containers have proper backgrounds */
+html[data-theme="dark"] .requests-grid,
+html[data-theme="dark"] .matches-grid,
+html[data-theme="dark"] .products-grid,
+.theme-dark .requests-grid,
+.theme-dark .matches-grid,
+.theme-dark .products-grid,
+html.theme-dark .requests-grid,
+html.theme-dark .matches-grid,
+html.theme-dark .products-grid {
+    background: transparent !important;
+}
+
+/* Dark Mode - Seller Listings */
+html[data-theme="dark"] .listing-card {
+    background: var(--bg-secondary) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .listing-info {
+    background: transparent !important;
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .listing-title {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .listing-description {
+    color: var(--text-secondary) !important;
+}
+
+html[data-theme="dark"] .listing-category,
+html[data-theme="dark"] .listing-condition {
+    background: var(--bg-tertiary) !important;
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .listing-stats {
+    color: var(--text-secondary) !important;
+}
+
+html[data-theme="dark"] .no-listings {
+    color: var(--text-secondary) !important;
+}
+
+html[data-theme="dark"] .no-listings h3 {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .no-listings i {
+    color: var(--border-color) !important;
+}
+
+/* Dark Mode - Listing Image */
+html[data-theme="dark"] .listing-image {
+    background: var(--bg-tertiary) !important;
+    color: var(--text-secondary) !important;
+}
+
+/* Dark Mode - Analytics */
+html[data-theme="dark"] .stat-card {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+html[data-theme="dark"] .stat-content h3,
+html[data-theme="dark"] .stat-info h3 {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .stat-content p,
+html[data-theme="dark"] .stat-info p {
+    color: var(--text-secondary) !important;
+}
+
+html[data-theme="dark"] .analytics-section h2 {
+    background: var(--bg-tertiary) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+html[data-theme="dark"] .chart-placeholder {
+    background: var(--bg-tertiary) !important;
+    color: var(--text-secondary) !important;
+}
+
+html[data-theme="dark"] .chart-placeholder i {
+    color: var(--border-color) !important;
+}
+
+html[data-theme="dark"] .analytics-card {
+    background: var(--bg-secondary) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .analytics-card h3 {
+    background: var(--bg-tertiary) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
 }

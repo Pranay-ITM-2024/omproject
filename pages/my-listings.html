@@ -19,11 +19,11 @@
             <div class="nav-menu" id="nav-menu">
                 <a href="../index.html" class="nav-link">Home</a>
                 <a href="../dashboard.html" class="nav-link">Dashboard</a>
-                <a href="browse.html" class="nav-link">Browse</a>
+                <a href="browse.html" class="nav-link nav-buyer-only">Browse</a>
                 <a href="seller.html" class="nav-link nav-seller-only">Sell</a>
                 <a href="analytics.html" class="nav-link nav-seller-only">Analytics</a>
                 <a href="my-listings.html" class="nav-link nav-seller-only active">My Listings</a>
-                <a href="matching.html" class="nav-link">Smart Match</a>
+                <a href="matching.html" class="nav-link nav-buyer-only">Smart Match</a>
                 <a href="history.html" class="nav-link nav-buyer-only">History</a>
                 <a href="support.html" class="nav-link">Support</a>
                 <a href="admin.html" class="nav-link nav-admin-only">Admin</a>
@@ -214,13 +214,28 @@
                 const user = getCurrentUser();
                 if (!user) return;
 
-                const listingsQuery = query(
-                    collection(db, 'listings'),
-                    where('sellerId', '==', user.uid),
-                    orderBy('createdAt', 'desc')
-                );
-
-                const snapshot = await getDocs(listingsQuery);
+                // Try the optimized query first, fall back to simple query if index doesn't exist
+                let listingsQuery;
+                let snapshot;
+                
+                try {
+                    // Optimized query with composite index
+                    listingsQuery = query(
+                        collection(db, 'listings'),
+                        where('sellerId', '==', user.uid),
+                        orderBy('createdAt', 'desc')
+                    );
+                    snapshot = await getDocs(listingsQuery);
+                } catch (error) {
+                    console.log('Composite index not available, using fallback query:', error.message);
+                    
+                    // Fallback: Simple query without orderBy
+                    listingsQuery = query(
+                        collection(db, 'listings'),
+                        where('sellerId', '==', user.uid)
+                    );
+                    snapshot = await getDocs(listingsQuery);
+                }
                 allListings = [];
 
                 snapshot.forEach(doc => {
@@ -228,6 +243,13 @@
                         id: doc.id,
                         ...doc.data()
                     });
+                });
+
+                // Sort by createdAt descending (client-side sorting for fallback)
+                allListings.sort((a, b) => {
+                    const dateA = a.createdAt?.toDate?.() || new Date(a.createdAt) || new Date(0);
+                    const dateB = b.createdAt?.toDate?.() || new Date(b.createdAt) || new Date(0);
+                    return dateB - dateA;
                 });
 
                 filteredListings = [...allListings];

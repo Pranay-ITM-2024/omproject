@@ -54,32 +54,77 @@ async function loadListings() {
         noListings.style.display = 'none';
 
         const user = getCurrentUser();
-        if (!user) return;
+        if (!user) {
+            console.log('No authenticated user found');
+            return;
+        }
 
-        // Query user's listings
-        const listingsQuery = query(
-            collection(db, 'listings'),
-            where('sellerId', '==', user.uid),
-            orderBy('createdAt', 'desc')
-        );
+        // Check if db is available
+        if (!db) {
+            console.error('Database not initialized');
+            throw new Error('Database not available');
+        }
 
-        const snapshot = await getDocs(listingsQuery);
-        currentListings = [];
+        // Query user's listings with better error handling
+        try {
+            // First try the optimized query with ordering (requires index)
+            const listingsQuery = query(
+                collection(db, 'listings'),
+                where('sellerId', '==', user.uid),
+                orderBy('createdAt', 'desc')
+            );
 
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            currentListings.push({
-                id: doc.id,
-                ...data,
-                createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt)
+            const snapshot = await getDocs(listingsQuery);
+            currentListings = [];
+
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                currentListings.push({
+                    id: doc.id,
+                    ...data,
+                    createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt)
+                });
             });
-        });
 
-        displayListings(currentListings);
+            displayListings(currentListings);
+        } catch (indexError) {
+            if (indexError.code === 'failed-precondition') {
+                console.log('Index not available, falling back to simple query...');
+                // Fallback to simple query without ordering
+                const listingsQuery = query(
+                    collection(db, 'listings'),
+                    where('sellerId', '==', user.uid)
+                );
+                
+                const snapshot = await getDocs(listingsQuery);
+                currentListings = [];
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    currentListings.push({
+                        id: doc.id,
+                        ...data,
+                        createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt)
+                    });
+                });
+                
+                // Sort manually on client side
+                currentListings.sort((a, b) => b.createdAt - a.createdAt);
+                displayListings(currentListings);
+            } else {
+                throw indexError;
+            }
+        }
 
     } catch (error) {
         console.error('Error loading listings:', error);
-        showNotification('Error loading your listings. Please try again.', 'error');
+        // Don't show error notification for permission errors, just show empty state
+        if (error.code !== 'permission-denied') {
+            showNotification('Unable to load listings at the moment. Please try again later.', 'warning');
+        }
+        // Show empty state
+        currentListings = [];
+        displayListings(currentListings);
     } finally {
         loadingSpinner.style.display = 'none';
         listingsGrid.style.display = 'grid';

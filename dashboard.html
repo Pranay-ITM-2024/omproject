@@ -19,11 +19,11 @@
             <div class="nav-menu" id="nav-menu">
                 <a href="index.html" class="nav-link">Home</a>
                 <a href="dashboard.html" class="nav-link active">Dashboard</a>
-                <a href="pages/browse.html" class="nav-link">Browse</a>
+                <a href="pages/browse.html" class="nav-link nav-buyer-only">Browse</a>
                 <a href="pages/seller.html" class="nav-link nav-seller-only">Sell</a>
                 <a href="pages/analytics.html" class="nav-link nav-seller-only">Analytics</a>
                 <a href="pages/my-listings.html" class="nav-link nav-seller-only">My Listings</a>
-                <a href="pages/matching.html" class="nav-link">Smart Match</a>
+                <a href="pages/matching.html" class="nav-link nav-buyer-only">Smart Match</a>
                 <a href="pages/history.html" class="nav-link nav-buyer-only">History</a>
                 <a href="pages/support.html" class="nav-link">Support</a>
                 <a href="pages/admin.html" class="nav-link nav-admin-only">Admin</a>
@@ -152,50 +152,6 @@
                 document.body.classList.add('theme-dark');
             }
             
-            // Set up theme toggle when DOM is ready
-            document.addEventListener('DOMContentLoaded', function() {
-                console.log('Setting up inline theme toggle...');
-                const themeToggle = document.getElementById('theme-toggle');
-                const themeIcon = document.getElementById('theme-icon');
-                
-                if (themeToggle) {
-                    console.log('Found theme toggle, adding listener');
-                    
-                    // Update icon based on current theme
-                    if (savedTheme === 'dark' && themeIcon) {
-                        themeIcon.className = 'fas fa-sun';
-                    }
-                    
-                    themeToggle.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        console.log('Theme toggle clicked!');
-                        
-                        const currentTheme = document.documentElement.getAttribute('data-theme');
-                        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                        
-                        console.log('Switching from', currentTheme, 'to', newTheme);
-                        
-                        // Apply new theme
-                        document.documentElement.setAttribute('data-theme', newTheme);
-                        document.body.className = document.body.className.replace('theme-dark', '');
-                        if (newTheme === 'dark') {
-                            document.body.classList.add('theme-dark');
-                        }
-                        
-                        // Update icon
-                        if (themeIcon) {
-                            themeIcon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-                        }
-                        
-                        // Save preference
-                        localStorage.setItem('marketplace-theme', newTheme);
-                        
-                        console.log('Theme changed to:', newTheme);
-                    });
-                } else {
-                    console.log('Theme toggle button not found!');
-                }
-            });
         })();
     </script>
     <script src="js/theme.js"></script>
