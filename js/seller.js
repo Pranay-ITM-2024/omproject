@@ -35,6 +35,114 @@ document.addEventListener('DOMContentLoaded', function () {
 
 let currentListings = [];
 
+// Sample data for testing (remove in production)
+async function addSampleData() {
+    const user = getCurrentUser();
+    if (!user) return;
+
+    const sampleListings = [
+        {
+            title: "Vintage Leather Jacket",
+            category: "clothing",
+            price: 2500,
+            condition: "good",
+            description: "Beautiful vintage leather jacket in excellent condition. Size Medium. Perfect for winter wear and has a classic style that never goes out of fashion.",
+            keywords: "vintage, leather, jacket, winter, fashion",
+            location: "Mumbai, Maharashtra",
+            sellerId: user.uid,
+            sellerEmail: user.email,
+            createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
+            status: 'active',
+            views: 45,
+            rating: 4.2,
+            ratingCount: 5,
+            images: []
+        },
+        {
+            title: "Programming Books Collection",
+            category: "books",
+            price: 1200,
+            condition: "like-new",
+            description: "Collection of programming books including JavaScript, Python, and React. Great for students and professionals looking to enhance their coding skills.",
+            keywords: "programming, books, javascript, python, react, coding",
+            location: "Bangalore, Karnataka",
+            sellerId: user.uid,
+            sellerEmail: user.email,
+            createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
+            status: 'active',
+            views: 32,
+            rating: 4.8,
+            ratingCount: 3,
+            images: []
+        },
+        {
+            title: "MacBook Pro 13-inch M2",
+            category: "electronics",
+            price: 85000,
+            condition: "like-new",
+            description: "Excellent condition MacBook Pro with M2 chip. Perfect for students and professionals. Comes with original charger and box.",
+            keywords: "macbook, laptop, apple, m2, computer",
+            location: "Delhi, Delhi",
+            sellerId: user.uid,
+            sellerEmail: user.email,
+            createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+            status: 'active',
+            views: 78,
+            rating: 4.9,
+            ratingCount: 8,
+            images: []
+        },
+        {
+            title: "Gaming Chair - Ergonomic",
+            category: "home",
+            price: 15000,
+            condition: "good",
+            description: "Comfortable ergonomic gaming chair with lumbar support. Perfect for long gaming or work sessions. Adjustable height and armrests.",
+            keywords: "gaming, chair, ergonomic, furniture, office",
+            location: "Pune, Maharashtra",
+            sellerId: user.uid,
+            sellerEmail: user.email,
+            createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+            status: 'active',
+            views: 23,
+            rating: 4.5,
+            ratingCount: 2,
+            images: []
+        },
+        {
+            title: "Football Cleats - Nike",
+            category: "sports",
+            price: 3500,
+            condition: "good",
+            description: "Nike football cleats in good condition. Size 9. Great grip and comfort for playing on natural grass fields.",
+            keywords: "football, cleats, nike, sports, shoes",
+            location: "Chennai, Tamil Nadu",
+            sellerId: user.uid,
+            sellerEmail: user.email,
+            createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000), // 14 days ago
+            status: 'active',
+            views: 18,
+            rating: 4.0,
+            ratingCount: 1,
+            images: []
+        }
+    ];
+
+    try {
+        for (const listing of sampleListings) {
+            await addDoc(collection(db, 'listings'), listing);
+        }
+        showNotification('Sample data added successfully!', 'success');
+        await loadListings(); // Reload listings to show the new data
+    } catch (error) {
+        console.error('Error adding sample data:', error);
+        showNotification('Error adding sample data', 'error');
+    }
+}
+
+// Add button to create sample data (for testing)
+window.addSampleData = addSampleData;
+
 async function initializeSellerPage() {
     // Load existing listings
     await loadListings();
@@ -138,6 +246,9 @@ function initializeEventListeners() {
         productForm.addEventListener('submit', handleProductSubmit);
     }
 
+    // Image upload functionality
+    initializeImageUpload();
+
     // Form validation
     const titleInput = document.getElementById('title');
     const priceInput = document.getElementById('price');
@@ -185,6 +296,197 @@ function validatePrice() {
     }
 }
 
+// Image upload functionality
+let selectedImages = [];
+const maxImages = 5;
+const maxFileSize = 5 * 1024 * 1024; // 5MB
+
+function initializeImageUpload() {
+    const imageInput = document.getElementById('images');
+    const uploadArea = document.getElementById('upload-area');
+    const clearButton = document.getElementById('clear-images');
+
+    // Click to upload
+    uploadArea.addEventListener('click', () => {
+        imageInput.click();
+    });
+
+    // File input change
+    imageInput.addEventListener('change', handleImageSelection);
+
+    // Drag and drop
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#3498db';
+        uploadArea.style.backgroundColor = '#e3f2fd';
+    });
+
+    uploadArea.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#ddd';
+        uploadArea.style.backgroundColor = '#f8f9fa';
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#ddd';
+        uploadArea.style.backgroundColor = '#f8f9fa';
+        
+        const files = Array.from(e.dataTransfer.files);
+        handleImageFiles(files);
+    });
+
+    // Clear all images
+    clearButton.addEventListener('click', clearAllImages);
+}
+
+function handleImageSelection(e) {
+    const files = Array.from(e.target.files);
+    handleImageFiles(files);
+}
+
+function handleImageFiles(files) {
+    const validFiles = files.filter(file => {
+        // Check file type
+        if (!file.type.startsWith('image/')) {
+            showNotification('Please select only image files', 'error');
+            return false;
+        }
+
+        // Check file size
+        if (file.size > maxFileSize) {
+            showNotification(`Image ${file.name} is too large. Maximum size is 5MB`, 'error');
+            return false;
+        }
+
+        return true;
+    });
+
+    // Check total image count
+    if (selectedImages.length + validFiles.length > maxImages) {
+        showNotification(`You can upload maximum ${maxImages} images`, 'error');
+        return;
+    }
+
+    // Add valid files to selectedImages
+    validFiles.forEach(file => {
+        selectedImages.push(file);
+    });
+
+    updateImagePreview();
+    updateUploadArea();
+}
+
+function updateImagePreview() {
+    const previewContainer = document.getElementById('image-preview');
+    const previewsGrid = document.getElementById('image-previews');
+
+    if (selectedImages.length === 0) {
+        previewContainer.style.display = 'none';
+        return;
+    }
+
+    previewContainer.style.display = 'block';
+    previewsGrid.innerHTML = '';
+
+    selectedImages.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const previewDiv = document.createElement('div');
+            previewDiv.className = 'image-preview';
+            
+            previewDiv.innerHTML = `
+                <img src="${e.target.result}" alt="Preview">
+                <button type="button" class="remove-image" data-index="${index}">
+                    <i class="fas fa-times"></i>
+                </button>
+                ${index === 0 ? '<span class="main-badge">Main</span>' : ''}
+            `;
+
+            // Add remove functionality
+            const removeBtn = previewDiv.querySelector('.remove-image');
+            removeBtn.addEventListener('click', () => removeImage(index));
+
+            previewsGrid.appendChild(previewDiv);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+function removeImage(index) {
+    selectedImages.splice(index, 1);
+    updateImagePreview();
+    updateUploadArea();
+    
+    // Clear the file input
+    const imageInput = document.getElementById('images');
+    imageInput.value = '';
+}
+
+function clearAllImages() {
+    selectedImages = [];
+    updateImagePreview();
+    updateUploadArea();
+    
+    // Clear the file input
+    const imageInput = document.getElementById('images');
+    imageInput.value = '';
+}
+
+function updateUploadArea() {
+    const uploadArea = document.getElementById('upload-area');
+    const uploadContent = uploadArea.querySelector('.upload-content');
+    
+    if (selectedImages.length >= maxImages) {
+        uploadContent.innerHTML = `
+            <i class="fas fa-check-circle"></i>
+            <p>Maximum images selected (${maxImages})</p>
+            <small>Remove some images to add more</small>
+        `;
+        uploadArea.style.pointerEvents = 'none';
+        uploadArea.style.opacity = '0.6';
+    } else {
+        uploadContent.innerHTML = `
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>Click to upload images or drag and drop</p>
+            <small>Upload up to ${maxImages} images (JPG, PNG, max 5MB each)</small>
+        `;
+        uploadArea.style.pointerEvents = 'auto';
+        uploadArea.style.opacity = '1';
+    }
+}
+
+// Convert images to base64 for storage
+async function processImagesForUpload() {
+    const processedImages = [];
+    
+    for (const file of selectedImages) {
+        try {
+            const base64 = await fileToBase64(file);
+            processedImages.push({
+                name: file.name,
+                type: file.type,
+                size: file.size,
+                data: base64
+            });
+        } catch (error) {
+            console.error('Error processing image:', error);
+            showNotification(`Error processing image ${file.name}`, 'error');
+        }
+    }
+    
+    return processedImages;
+}
+
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
 function validateDescription() {
     const descriptionInput = document.getElementById('description');
     const value = descriptionInput.value.trim();
@@ -206,6 +508,10 @@ async function handleProductSubmit(e) {
 
     // Get form data
     const formData = new FormData(e.target);
+    
+    // Process images
+    const images = await processImagesForUpload();
+    
     const productData = {
         title: formData.get('title').trim(),
         category: formData.get('category'),
@@ -214,6 +520,7 @@ async function handleProductSubmit(e) {
         description: formData.get('description').trim(),
         keywords: formData.get('keywords').trim(),
         location: formData.get('location').trim(),
+        images: images, // Add processed images
         sellerId: user.uid,
         sellerEmail: user.email,
         createdAt: new Date(),
@@ -245,6 +552,9 @@ async function handleProductSubmit(e) {
 
         // Reset form
         e.target.reset();
+        
+        // Clear selected images
+        clearAllImages();
 
         showNotification('Product listed successfully!', 'success');
 

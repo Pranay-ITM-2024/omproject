@@ -7,6 +7,7 @@
     <title>Analytics - P2P Marketplace</title>
     <link rel="stylesheet" href="../css/style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -96,10 +97,15 @@
                 <div class="analytics-section">
                     <h2>Performance Overview</h2>
                     <div class="chart-container">
-                        <div class="chart-placeholder">
+                        <canvas id="performanceChart" width="400" height="200"></canvas>
+                        <div id="chart-loading" class="chart-loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Loading performance data...</p>
+                        </div>
+                        <div id="chart-no-data" class="chart-no-data" style="display: none;">
                             <i class="fas fa-chart-line"></i>
-                            <p>Performance chart will be displayed here</p>
-                            <small>Track views, inquiries, and ratings over time</small>
+                            <p>No performance data available yet</p>
+                            <small>Data will appear as you get views and inquiries</small>
                         </div>
                     </div>
                 </div>
@@ -156,6 +162,7 @@
                 await loadSellerStats(user.uid);
                 await loadTopProducts(user.uid);
                 await loadRecentActivity(user.uid);
+                await loadPerformanceChart(user.uid);
             } catch (error) {
                 console.error('Error loading analytics:', error);
             }
@@ -333,6 +340,288 @@
                 container.innerHTML = '<p>Error loading recent activity</p>';
             }
         }
+
+        // Performance Chart
+        let performanceChart = null;
+
+        async function loadPerformanceChart(sellerId) {
+            const chartLoading = document.getElementById('chart-loading');
+            const chartNoData = document.getElementById('chart-no-data');
+            const chartCanvas = document.getElementById('performanceChart');
+
+            try {
+                // Get listings data for the chart
+                const listingsQuery = query(
+                    collection(db, 'listings'),
+                    where('sellerId', '==', sellerId)
+                );
+                const snapshot = await getDocs(listingsQuery);
+
+                if (snapshot.empty) {
+                    chartLoading.style.display = 'none';
+                    chartNoData.style.display = 'block';
+                    return;
+                }
+
+                // Process data for chart
+                const chartData = processPerformanceData(snapshot);
+
+                if (chartData.labels.length === 0) {
+                    chartLoading.style.display = 'none';
+                    chartNoData.style.display = 'block';
+                    return;
+                }
+
+                // Hide loading, show chart
+                chartLoading.style.display = 'none';
+                chartCanvas.style.display = 'block';
+
+                // Create the chart
+                createPerformanceChart(chartData);
+
+            } catch (error) {
+                console.error('Error loading performance chart:', error);
+                chartLoading.style.display = 'none';
+                chartNoData.style.display = 'block';
+            }
+        }
+
+        function processPerformanceData(snapshot) {
+            const data = [];
+            
+            snapshot.forEach(doc => {
+                const listing = doc.data();
+                if (listing.createdAt) {
+                    const date = listing.createdAt.toDate ? listing.createdAt.toDate() : new Date(listing.createdAt);
+                    data.push({
+                        date: date,
+                        views: listing.views || 0,
+                        rating: listing.rating || 0,
+                        title: listing.title
+                    });
+                }
+            });
+
+            // Sort by date
+            data.sort((a, b) => a.date - b.date);
+
+            // Group by week/month for better visualization
+            const grouped = groupDataByWeek(data);
+
+            return {
+                labels: grouped.map(item => item.label),
+                views: grouped.map(item => item.views),
+                ratings: grouped.map(item => item.avgRating),
+                listings: grouped.map(item => item.listingCount)
+            };
+        }
+
+        function groupDataByWeek(data) {
+            const grouped = {};
+            
+            data.forEach(item => {
+                const weekStart = getWeekStart(item.date);
+                const weekLabel = formatWeekLabel(weekStart);
+                
+                if (!grouped[weekLabel]) {
+                    grouped[weekLabel] = {
+                        label: weekLabel,
+                        views: 0,
+                        totalRating: 0,
+                        ratingCount: 0,
+                        listingCount: 0
+                    };
+                }
+                
+                grouped[weekLabel].views += item.views;
+                if (item.rating > 0) {
+                    grouped[weekLabel].totalRating += item.rating;
+                    grouped[weekLabel].ratingCount++;
+                }
+                grouped[weekLabel].listingCount++;
+            });
+
+            return Object.values(grouped).map(group => ({
+                ...group,
+                avgRating: group.ratingCount > 0 ? (group.totalRating / group.ratingCount).toFixed(1) : 0
+            }));
+        }
+
+        function getWeekStart(date) {
+            const d = new Date(date);
+            const day = d.getDay();
+            const diff = d.getDate() - day;
+            return new Date(d.setDate(diff));
+        }
+
+        function formatWeekLabel(date) {
+            const options = { month: 'short', day: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        function createPerformanceChart(data) {
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (performanceChart) {
+                performanceChart.destroy();
+            }
+
+            // Determine colors based on theme
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const textColor = isDark ? '#ffffff' : '#2c3e50';
+            const gridColor = isDark ? '#444444' : '#e5e5e5';
+
+            performanceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [
+                        {
+                            label: 'Total Views',
+                            data: data.views,
+                            borderColor: '#3498db',
+                            backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'New Listings',
+                            data: data.listings,
+                            borderColor: '#27ae60',
+                            backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4,
+                            yAxisID: 'y1'
+                        },
+                        {
+                            label: 'Avg Rating',
+                            data: data.ratings,
+                            borderColor: '#f39c12',
+                            backgroundColor: 'rgba(243, 156, 18, 0.1)',
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.4,
+                            yAxisID: 'y2'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: textColor
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: isDark ? '#333' : '#fff',
+                            titleColor: textColor,
+                            bodyColor: textColor,
+                            borderColor: gridColor,
+                            borderWidth: 1
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Time Period',
+                                color: textColor
+                            },
+                            ticks: {
+                                color: textColor
+                            },
+                            grid: {
+                                color: gridColor
+                            }
+                        },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Views',
+                                color: textColor
+                            },
+                            ticks: {
+                                color: textColor
+                            },
+                            grid: {
+                                color: gridColor
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Listings',
+                                color: textColor
+                            },
+                            ticks: {
+                                color: textColor
+                            },
+                            grid: {
+                                drawOnChartArea: false,
+                                color: gridColor
+                            }
+                        },
+                        y2: {
+                            type: 'linear',
+                            display: false,
+                            min: 0,
+                            max: 5
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update chart colors when theme changes
+        function updateChartTheme() {
+            if (performanceChart) {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                const textColor = isDark ? '#ffffff' : '#2c3e50';
+                const gridColor = isDark ? '#444444' : '#e5e5e5';
+
+                performanceChart.options.plugins.legend.labels.color = textColor;
+                performanceChart.options.plugins.tooltip.backgroundColor = isDark ? '#333' : '#fff';
+                performanceChart.options.plugins.tooltip.titleColor = textColor;
+                performanceChart.options.plugins.tooltip.bodyColor = textColor;
+                performanceChart.options.plugins.tooltip.borderColor = gridColor;
+
+                performanceChart.options.scales.x.title.color = textColor;
+                performanceChart.options.scales.x.ticks.color = textColor;
+                performanceChart.options.scales.x.grid.color = gridColor;
+                performanceChart.options.scales.y.title.color = textColor;
+                performanceChart.options.scales.y.ticks.color = textColor;
+                performanceChart.options.scales.y.grid.color = gridColor;
+                performanceChart.options.scales.y1.title.color = textColor;
+                performanceChart.options.scales.y1.ticks.color = textColor;
+                performanceChart.options.scales.y1.grid.color = gridColor;
+
+                performanceChart.update();
+            }
+        }
+
+        // Listen for theme changes
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('#theme-toggle')) {
+                setTimeout(updateChartTheme, 100);
+            }
+        });
     </script>
     <script src="../js/theme.js"></script>
 </body>

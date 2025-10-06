@@ -107,6 +107,30 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="images">Product Images</label>
+                            <div class="image-upload-container">
+                                <input type="file" id="images" name="images" multiple accept="image/*" class="image-input">
+                                <div class="upload-area" id="upload-area">
+                                    <div class="upload-content">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <p>Click to upload images or drag and drop</p>
+                                        <small>Upload up to 5 images (JPG, PNG, max 5MB each)</small>
+                                    </div>
+                                </div>
+                                <div class="image-preview-container" id="image-preview" style="display: none;">
+                                    <div class="preview-header">
+                                        <span>Selected Images:</span>
+                                        <button type="button" class="btn-clear-images" id="clear-images">
+                                            <i class="fas fa-times"></i> Clear All
+                                        </button>
+                                    </div>
+                                    <div class="image-previews" id="image-previews"></div>
+                                </div>
+                            </div>
+                            <small>Images help buyers see your product clearly. First image will be the main photo.</small>
+                        </div>
+
+                        <div class="form-group">
                             <label for="keywords">Keywords</label>
                             <input type="text" id="keywords" name="keywords"
                                 placeholder="e.g., vintage, handmade, organic">
@@ -136,6 +160,9 @@
                     <div class="section-header">
                         <h2>My Listings</h2>
                         <p>Manage your existing product listings</p>
+                        <button onclick="addSampleData()" class="btn btn-outline btn-small" id="sample-data-btn" style="margin-top: 10px;">
+                            <i class="fas fa-plus"></i> Add Sample Data for Testing
+                        </button>
                     </div>
 
                     <div id="listings-container" class="listings-container">
